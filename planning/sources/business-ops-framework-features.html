@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Ops Framework — Features & Functionality (Artifact-First Revision)</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121933;
+      --panel-2: #1a2446;
+      --border: #2d3d66;
+      --text: #e8efff;
+      --muted: #a0b2da;
+      --accent: #7dc7ff;
+      --accent-2: #8ef3cc;
+      --good: #8defab;
+      --warn: #ffd57a;
+      --danger: #ff9fa8;
+      --code: #0d1530;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #070d18 0%, #0b1020 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.62;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 24px 20px 36px;
+      background: rgba(8, 13, 27, 0.95);
+      border-right: 1px solid var(--border);
+    }
+    aside h1 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      line-height: 1.25;
+    }
+    aside p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    nav a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 10px;
+      margin: 3px 0;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-size: 0.94rem;
+    }
+    nav a:hover {
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(125, 199, 255, 0.08);
+    }
+    main {
+      padding: 34px clamp(18px, 4vw, 56px) 72px;
+      max-width: 1280px;
+    }
+    .hero {
+      background: linear-gradient(180deg, rgba(125,199,255,0.10), rgba(142,243,204,0.05));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+    .hero h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.95rem, 4vw, 2.9rem);
+      line-height: 1.12;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 1020px;
+      font-size: 1.03rem;
+    }
+    .chips { margin-top: 16px; }
+    .chip {
+      display: inline-block;
+      margin: 0 8px 8px 0;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--accent-2);
+      font-size: 0.84rem;
+    }
+    section {
+      background: rgba(18, 25, 51, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 26px 24px;
+      margin: 24px 0;
+    }
+    h2, h3, h4 { line-height: 1.2; }
+    h2 { margin: 0 0 12px; font-size: 1.55rem; }
+    h3 { margin: 22px 0 8px; font-size: 1.16rem; }
+    h4 { margin: 18px 0 8px; font-size: 1rem; color: var(--accent-2); }
+    p, li { color: var(--text); }
+    .muted { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .card {
+      background: rgba(26, 36, 70, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .card h4 { margin-top: 0; }
+    .strong {
+      margin: 14px 0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border-left: 3px solid var(--accent);
+      background: rgba(125, 199, 255, 0.08);
+    }
+    .callout {
+      margin: 14px 0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border-left: 3px solid var(--warn);
+      background: rgba(255, 213, 122, 0.09);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: rgba(125, 199, 255, 0.08);
+      color: var(--accent);
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: var(--code);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 6px;
+      color: #dce8ff;
+    }
+    pre {
+      margin: 14px 0;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--code);
+      border: 1px solid var(--border);
+      color: #d9e6ff;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.45;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+    .danger { color: var(--danger); }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      aside {
+        position: relative;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <h1>Artifact-First Features</h1>
+      <p>Revised feature inventory focused on administrative operations, artifact management, future work capture, and daily execution loops.</p>
+      <nav>
+        <a href="#thesis">1. Product thesis</a>
+        <a href="#jobs">2. Primary jobs to be done</a>
+        <a href="#knowledge">3. Artifact-first knowledge base</a>
+        <a href="#future-work">4. Future work tracking</a>
+        <a href="#workday">5. Workday workflow</a>
+        <a href="#scheduled">6. Scheduled admin workflows</a>
+        <a href="#lifecycle">7. Business lifecycle coverage</a>
+        <a href="#assets">8. Asset & admin infrastructure</a>
+        <a href="#agent">9. Project management/admin agent</a>
+        <a href="#integrations">10. Integrations</a>
+        <a href="#suggestions">11. Communication-first suggestions</a>
+        <a href="#mvp">12. MVP feature set</a>
+        <a href="#extensibility">13. Extensibility direction</a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="hero">
+        <h2>Business Operations Framework — Features &amp; Functionality<br/>Artifact-First Revision</h2>
+        <p>
+          This revision shifts the framework toward its most practical near-term purpose: handling the <strong>administrative and operational work</strong>
+          around client engagements. The primary knowledge base should be formed by the actual working artifacts of the business — statements of work,
+          contract amendments, requirements documents, retainers, time trackers, invoices, billing records, recorded calls, email threads, meeting materials,
+          and related client assets — with structured knowledge extracted from and connected to those artifacts over time.
+        </p>
+        <div class="chips">
+          <span class="chip">Admin-first</span>
+          <span class="chip">Artifact-driven knowledge</span>
+          <span class="chip">Recurring workflows</span>
+          <span class="chip">Daily recap / todo loop</span>
+          <span class="chip">Future work capture</span>
+          <span class="chip">Meeting-to-admin automation</span>
+        </div>
+      </div>
+
+      <section id="thesis">
+        <h2>1. Product thesis</h2>
+        <div class="strong">
+          The first and most valuable version of this framework should function as an <strong>agentic administrative operating system for client work</strong>:
+          capturing operational artifacts, keeping future work visible, and automating end-of-day and post-meeting administrative processes.
+        </div>
+        <p>
+          Rather than starting as a broad abstract knowledge graph or generic project system, the platform should begin from the actual materials used to run the business.
+          Knowledge should emerge from those materials and remain linked back to them.
+        </p>
+        <p>
+          Among the most important primary artifacts are <strong>recorded calls and email threads</strong>, because those are often the main places where business users
+          communicate feedback, confirm approvals, clarify scope, make decisions, and request changes.
+        </p>
+        <p>
+          In other words, the system should answer questions like:
+        </p>
+        <ul>
+          <li>What did we agree to deliver?</li>
+          <li>What changed commercially or operationally?</li>
+          <li>What work happened today and what still needs to happen?</li>
+          <li>What was said in recent calls that implies future work, risk, or expansion?</li>
+          <li>What admin work should run automatically after the day’s work is done?</li>
+        </ul>
+      </section>
+
+      <section id="jobs">
+        <h2>2. Primary jobs to be done</h2>
+        <div class="grid">
+          <div class="card">
+            <h4>Handle administrative work</h4>
+            <p>Manage the operational artifacts and recurring admin tasks that surround real client delivery.</p>
+          </div>
+          <div class="card">
+            <h4>Keep future work visible</h4>
+            <p>Capture possible follow-on work, expansions, changes, and discovery signals from calls, email, and messages.</p>
+          </div>
+          <div class="card">
+            <h4>Run the daily operating loop</h4>
+            <p>Provide a beginning-of-day recap/todo view and a late-day or post-call admin execution cycle.</p>
+          </div>
+          <div class="card">
+            <h4>Generate clean downstream outputs</h4>
+            <p>Turn meetings and work activity into recaps, notes, wiki updates, action items, time logs, and commercial artifacts.</p>
+          </div>
+          <div class="card">
+            <h4>Capture approvals &amp; decisions</h4>
+            <p>Treat recorded calls and email threads as first-class business artifacts where approvals, feedback, changes, and decisions are actually made.</p>
+          </div>
+        </div>
+
+        <h3>Core user-facing outcomes</h3>
+        <ul>
+          <li>A consultant or operator starts the day with a clear, current recap and todo list.</li>
+          <li>After meetings and hands-on work, the system automatically performs the admin clean-up work.</li>
+          <li>Commercial and delivery artifacts stay current and queryable.</li>
+          <li>Future opportunities and follow-on work are captured continuously, not lost in conversations.</li>
+          <li>Decisions, action items, approvals, and operational changes get reflected in the knowledge/wiki layer with minimal manual effort.</li>
+        </ul>
+      </section>
+
+      <section id="knowledge">
+        <h2>3. Artifact-first knowledge base</h2>
+        <p>
+          The knowledge base should be primarily composed of the <strong>artifacts and materials actually used to operate the business</strong>, rather than only abstract notes.
+          Structured knowledge should be extracted from those artifacts and linked across clients, projects, decisions, and workflows.
+        </p>
+        <p>
+          Critically, <strong>recorded calls and email threads should be treated as first-class source artifacts</strong>, not just optional inputs, because they are often the
+          primary channels where feedback is given, approvals are confirmed, scope is negotiated, and business decisions are made.
+        </p>
+
+        <h3>3.1 Primary artifact classes</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Artifact class</th>
+              <th>Purpose in the system</th>
+              <th>Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Commercial agreements</td>
+              <td>Define scope, terms, rates, obligations, and change history</td>
+              <td>Statements of Work, contract amendments, retainers</td>
+            </tr>
+            <tr>
+              <td>Pre-sales artifacts</td>
+              <td>Capture how opportunities are framed, sold, and proposed before formal execution begins</td>
+              <td>Pre-sales decks, proposals, opportunity briefs, discovery summaries</td>
+            </tr>
+            <tr>
+              <td>Requirements artifacts</td>
+              <td>Capture what is being built, validated, or delivered</td>
+              <td>Functional requirements docs, technical requirements docs, implementation notes</td>
+            </tr>
+            <tr>
+              <td>Time & billing records</td>
+              <td>Track work performed and support invoicing / commercial follow-through</td>
+              <td>Time trackers, invoice drafts, invoice records, billing support logs</td>
+            </tr>
+            <tr>
+              <td>Decision &amp; approval communications</td>
+              <td>Capture approvals, feedback, commercial direction, scope changes, and business decisions at their source</td>
+              <td>Recorded calls, call transcripts, email threads, approval chains, client feedback emails</td>
+            </tr>
+            <tr>
+              <td>Operational conversation records</td>
+              <td>Capture commitments, open questions, working context, and future work signals</td>
+              <td>Meeting notes, chat threads, message exports, internal coordination notes</td>
+            </tr>
+            <tr>
+              <td>Delivery artifacts</td>
+              <td>Store outputs used to manage and communicate project work</td>
+              <td>Status updates, recaps, decks, wiki pages, decision memos</td>
+            </tr>
+            <tr>
+              <td>Testing / evidence artifacts</td>
+              <td>Preserve proof, validation, or reference material linked to work performed</td>
+              <td>Test results, screenshots, validation notes, QA summaries</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>3.2 Knowledge extracted from artifacts</h3>
+        <ul>
+          <li>scope commitments and constraints</li>
+          <li>deliverables and milestones</li>
+          <li>stakeholders and roles</li>
+          <li>decisions and decision rationale</li>
+          <li>approvals, signoffs, and unresolved approval requests</li>
+          <li>feedback, objections, and change signals</li>
+          <li>action items and owners</li>
+          <li>time/billing implications</li>
+          <li>future work opportunities or change requests</li>
+          <li>operational lessons learned</li>
+        </ul>
+
+        <h3>3.3 Knowledge base behavior</h3>
+        <ul>
+          <li>Each artifact should remain a durable source object.</li>
+          <li>Extracted structured knowledge should stay linked to its source artifact.</li>
+          <li>The system should support both document-style retrieval and structured query.</li>
+          <li>Knowledge wiki pages should be maintained as cleaned, consolidated views of source activity.</li>
+          <li>Decisions, action items, and changes should be continuously reconciled back into the knowledge layer.</li>
+        </ul>
+
+        <div class="callout">
+          <strong>Design principle:</strong> do not treat the wiki as the source of truth. Treat it as a cleaned and organized derivative view of the artifact and activity layer.
+        </div>
+      </section>
+
+      <section id="future-work">
+        <h2>4. Future work tracking</h2>
+        <p>
+          Future work tracking should be a first-class subsystem. It should continuously capture possible next-phase work, new requirements, changes in scope,
+          upsell/expansion signals, and longer-term opportunities emerging from discovery and ongoing client conversation.
+        </p>
+
+        <h3>4.1 Sources of future work signals</h3>
+        <ul>
+          <li>recorded calls and transcripts</li>
+          <li>approval and feedback emails</li>
+          <li>email threads</li>
+          <li>chat or message conversations</li>
+          <li>meeting recaps and action items</li>
+          <li>requirements discussions and change requests</li>
+          <li>delivery friction, recurring issues, or repeated asks</li>
+        </ul>
+
+        <h3>4.2 Future work functionality</h3>
+        <div class="grid">
+          <div class="card">
+            <h4>Capture</h4>
+            <p>Automatically detect and log future work candidates from conversations and artifacts.</p>
+          </div>
+          <div class="card">
+            <h4>Qualification</h4>
+            <p>Classify signals as idea, request, risk, change, expansion, or follow-on project.</p>
+          </div>
+          <div class="card">
+            <h4>Linkage</h4>
+            <p>Attach future work items to client, project, artifact, meeting, and commercial context.</p>
+          </div>
+          <div class="card">
+            <h4>Promotion</h4>
+            <p>Turn future work into tasks, backlog items, proposal inputs, amendments, or renewal materials.</p>
+          </div>
+        </div>
+
+        <h3>4.3 Output examples</h3>
+        <ul>
+          <li>future opportunity backlog</li>
+          <li>potential amendment candidates</li>
+          <li>proposal follow-up notes</li>
+          <li>client roadmap suggestions</li>
+          <li>renewal / expansion input briefs</li>
+        </ul>
+      </section>
+
+      <section id="workday">
+        <h2>5. Workday workflow</h2>
+        <p>
+          The framework should support a clear operating rhythm for the workday. This is not just project tracking — it is daily operational coordination.
+        </p>
+
+        <h3>5.1 Beginning-of-day workflow</h3>
+        <p>The start of the day should produce a <strong>todo / recap briefing</strong>.</p>
+        <ul>
+          <li>today’s meetings and relevant prep context</li>
+          <li>open action items by client and priority</li>
+          <li>work that should be completed today</li>
+          <li>missing follow-ups from prior days</li>
+          <li>time/billing reminders</li>
+          <li>admin tasks that are due or overdue</li>
+          <li>future work signals that need qualification</li>
+          <li>meetings that need to be scheduled, confirmed, or followed up on</li>
+        </ul>
+
+        <h3>5.2 During-the-day workflow</h3>
+        <ul>
+          <li>capture calls, transcripts, key email threads, approvals, and messages</li>
+          <li>associate them with clients, projects, and existing artifacts</li>
+          <li>surface likely action items, decisions, and approval events in near real time</li>
+          <li>identify when a follow-up meeting or scheduling action is needed</li>
+          <li>track hands-on-keyboard work that may need to be logged or turned into deliverable artifacts</li>
+        </ul>
+
+        <h3>5.3 Post-call / post-communication workflow</h3>
+        <p>After each call, recorded discussion, or important email thread, the framework should be able to generate:</p>
+        <ul>
+          <li>meeting notes / recaps</li>
+          <li>action items and owners</li>
+          <li>decision summaries</li>
+          <li>approval status or approval requests</li>
+          <li>future work signals</li>
+          <li>meeting scheduling suggestions or follow-up scheduling drafts</li>
+          <li>wiki or knowledge updates</li>
+          <li>time-entry suggestions</li>
+        </ul>
+
+        <h3>5.4 Late-day / closeout workflow</h3>
+        <p>
+          After the day’s calls and hands-on work are done, scheduled workflows should execute the administrative closeout layer.
+        </p>
+        <pre>Start of day
+  -&gt; recap + todos + meeting prep
+During day
+  -&gt; collect work signals + conversations + artifacts
+After each call / key communication
+  -&gt; recap + actions + decisions + approvals + future work extraction + scheduling follow-up
+End of day / scheduled closeout
+  -&gt; time logging
+  -&gt; artifact generation
+  -&gt; wiki cleanup
+  -&gt; decisions cleanup
+  -&gt; approval reconciliation
+  -&gt; action item reconciliation
+  -&gt; billing/admin updates</pre>
+      </section>
+
+      <section id="scheduled">
+        <h2>6. Scheduled admin workflows</h2>
+        <p>
+          Scheduled workflows should handle the repetitive admin layer so users do not have to manually reconstruct and close the loop each day.
+        </p>
+
+        <h3>6.1 Core scheduled workflows</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Workflow</th>
+              <th>Trigger / cadence</th>
+              <th>Outputs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Morning recap</td>
+              <td>Start of business day</td>
+              <td>todo summary, calendar prep, overdue actions, scheduling needs, daily focus list</td>
+            </tr>
+            <tr>
+              <td>Post-call / post-communication recap</td>
+              <td>After meeting, transcript, or key email ingestion</td>
+              <td>meeting notes, action items, decisions, approvals, follow-up draft, scheduling suggestion or scheduling draft</td>
+            </tr>
+            <tr>
+              <td>Daily admin closeout</td>
+              <td>End of business day</td>
+              <td>time log suggestions, wiki cleanup, action reconciliation, decision capture, approval cleanup</td>
+            </tr>
+            <tr>
+              <td>Decision / approval reconciliation</td>
+              <td>Daily or triggered by important communications</td>
+              <td>updated approval state, decision log updates, unresolved approval queue</td>
+            </tr>
+            <tr>
+              <td>Artifact generation</td>
+              <td>After key work events or on schedule</td>
+              <td>status docs, decks, summaries, operational memos</td>
+            </tr>
+            <tr>
+              <td>Billing support</td>
+              <td>Daily / weekly / invoice-cycle cadence</td>
+              <td>time tracker cleanup, invoice support packet, billing notes</td>
+            </tr>
+            <tr>
+              <td>Future work review</td>
+              <td>Weekly or milestone cadence</td>
+              <td>future opportunities, change requests, roadmap candidates</td>
+            </tr>
+            <tr>
+              <td>Knowledge/wiki maintenance</td>
+              <td>Daily / weekly cadence</td>
+              <td>updated decision pages, action summaries, cleaned client context</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>6.2 Scheduled workflow requirements</h3>
+        <ul>
+          <li>time-based scheduling</li>
+          <li>event-based triggering</li>
+          <li>rerun/reconcile capability</li>
+          <li>human approval for selected outputs</li>
+          <li>audit trail of what ran and what changed</li>
+        </ul>
+      </section>
+
+      <section id="lifecycle">
+        <h2>7. Business lifecycle coverage</h2>
+        <p>
+          Even though the initial emphasis is administrative operations, the framework still needs to support the full client lifecycle because the artifacts and workflows change by stage.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Primary artifacts / admin focus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Discovery / pre-sales</td>
+              <td>call notes, opportunity briefs, pre-sales decks, proposals, future work tracking, proposal inputs</td>
+            </tr>
+            <tr>
+              <td>Commercial structuring</td>
+              <td>SOWs, amendments, retainers, scope definitions, requirements collection</td>
+            </tr>
+            <tr>
+              <td>Onboarding / kickoff</td>
+              <td>requirements docs, kickoff materials, workstream definitions, operating cadence</td>
+            </tr>
+            <tr>
+              <td>Execution / delivery</td>
+              <td>meeting recaps, time tracking, status artifacts, decision logs, test artifacts</td>
+            </tr>
+            <tr>
+              <td>Change management</td>
+              <td>change requests, amendment candidates, scope deltas, future work logging</td>
+            </tr>
+            <tr>
+              <td>Billing / admin closeout</td>
+              <td>time tracker cleanup, invoices, support records, admin summaries</td>
+            </tr>
+            <tr>
+              <td>Wrap-up / renewal / expansion</td>
+              <td>closeout docs, lessons learned, renewal briefs, next-phase opportunity tracking</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="assets">
+        <h2>8. Asset &amp; admin infrastructure</h2>
+        <p>
+          The framework should provide lightweight but durable infrastructure for the actual files and records used in administrative operations.
+        </p>
+
+        <h3>8.1 Asset handling requirements</h3>
+        <div class="grid">
+          <div class="card">
+            <h4>Storage awareness</h4>
+            <p>Track where artifacts live across drive systems, local storage, or external platforms.</p>
+          </div>
+          <div class="card">
+            <h4>Metadata</h4>
+            <p>Associate client, project, stage, owner, date, artifact class, and source conversation.</p>
+          </div>
+          <div class="card">
+            <h4>Linkage</h4>
+            <p>Connect files to meetings, decisions, tasks, invoices, time entries, and future work items.</p>
+          </div>
+          <div class="card">
+            <h4>Lineage</h4>
+            <p>Show which source records led to which generated outputs or cleaned wiki entries.</p>
+          </div>
+          <div class="card">
+            <h4>Versioning awareness</h4>
+            <p>Differentiate canonical documents, drafts, amendments, and derivative summaries.</p>
+          </div>
+          <div class="card">
+            <h4>Experimentation support</h4>
+            <p>Allow testing model interactions with operational artifacts without destabilizing source records.</p>
+          </div>
+        </div>
+
+        <h3>8.2 Typical admin artifacts to support first</h3>
+        <ul>
+          <li>SOWs and amendments</li>
+          <li>pre-sales decks and proposals</li>
+          <li>functional and technical requirements docs</li>
+          <li>retainer and scope records</li>
+          <li>time trackers and time-entry suggestions</li>
+          <li>invoice records and billing support notes</li>
+          <li>recorded calls, transcripts, and meeting recordings</li>
+          <li>email threads, approval chains, and client feedback emails</li>
+          <li>meeting notes, recaps, and follow-ups</li>
+          <li>decision logs and action item trackers</li>
+        </ul>
+      </section>
+
+      <section id="agent">
+        <h2>9. Project management / admin agent capabilities</h2>
+        <p>
+          The core agent should operate less like a generic assistant and more like an <strong>operations coordinator + admin orchestrator</strong>.
+        </p>
+
+        <h3>9.1 Core capabilities</h3>
+        <ul>
+          <li>assemble current-day operational context</li>
+          <li>generate beginning-of-day recap and todo packet</li>
+          <li>process new calls, emails, approval threads, and messages into structured outputs</li>
+          <li>identify decisions, approvals, actions, and future work</li>
+          <li>recommend and draft time logs</li>
+          <li>generate or update admin artifacts</li>
+          <li>facilitate next-meeting scheduling and follow-up meeting coordination</li>
+          <li>maintain clean client wiki / knowledge views</li>
+          <li>support billing and invoicing workflows with linked evidence</li>
+        </ul>
+
+        <h3>9.2 Agent outputs</h3>
+        <ul>
+          <li>daily recap / todo list</li>
+          <li>post-call meeting notes and recap email drafts</li>
+          <li>meeting scheduling suggestions, next-meeting prompts, or scheduling drafts</li>
+          <li>approval status summaries and unresolved approval queues</li>
+          <li>action item tracker updates</li>
+          <li>decision log updates</li>
+          <li>time entry suggestions or completed time logs</li>
+          <li>new artifact drafts</li>
+          <li>wiki cleanup summaries</li>
+          <li>future work candidate logs</li>
+        </ul>
+      </section>
+
+      <section id="integrations">
+        <h2>10. Integrations</h2>
+        <p>
+          Since much of the work already lives in external business systems, the platform should integrate with the systems where operational artifacts and communication already happen.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Integration area</th>
+              <th>Examples</th>
+              <th>Use in framework</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Email</td>
+              <td>Gmail, Outlook</td>
+              <td>follow-up capture, approval tracking, decision extraction, future work detection, communication drafting</td>
+            </tr>
+            <tr>
+              <td>Calendar</td>
+              <td>Google Calendar, Outlook Calendar</td>
+              <td>start-of-day prep, post-meeting triggers, cadence scheduling, and follow-up meeting coordination</td>
+            </tr>
+            <tr>
+              <td>Docs / storage</td>
+              <td>Drive, Docs, SharePoint, OneDrive, Word, Sheets, Excel</td>
+              <td>artifact access, generation, sync, and metadata linking</td>
+            </tr>
+            <tr>
+              <td>Messaging</td>
+              <td>Teams, chat systems, message exports</td>
+              <td>future work capture, decision extraction, conversation context</td>
+            </tr>
+            <tr>
+              <td>Recording / transcription</td>
+              <td>call recording tools, transcript exports</td>
+              <td>meeting recap automation, decision extraction, approval evidence capture, action extraction, wiki updates</td>
+            </tr>
+            <tr>
+              <td>Billing / tracking systems</td>
+              <td>time trackers, invoicing systems, spreadsheets</td>
+              <td>time logging, invoice support, admin reconciliation</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="suggestions">
+        <h2>11. Communication-first suggestions</h2>
+        <div class="strong">
+          Because business users make a large share of their decisions in <strong>calls and email</strong>, the framework should treat those channels as primary operational systems — not just as places to fetch text from.
+        </div>
+
+        <h3>11.1 New design suggestion: decision / approval inbox</h3>
+        <p>
+          Add a dedicated layer that tracks decision and approval events extracted from recorded calls and email threads.
+        </p>
+        <ul>
+          <li>pending approvals</li>
+          <li>confirmed approvals</li>
+          <li>rejected or revised items</li>
+          <li>ambiguous decisions requiring clarification</li>
+          <li>approvals linked to artifacts like SOWs, requirements docs, invoices, or follow-up actions</li>
+        </ul>
+
+        <h3>11.2 New design suggestion: source communications should be canonical evidence</h3>
+        <p>
+          Calls and emails should not just feed summaries; they should remain queryable evidence for why a decision, approval, or scope change was recorded.
+        </p>
+        <ul>
+          <li>Every important approval or decision should point back to the call, transcript section, or email thread where it happened.</li>
+          <li>Derived wiki pages and clean summaries should preserve source references.</li>
+          <li>Commercial and operational changes should be auditable against source communications.</li>
+        </ul>
+
+        <h3>11.3 New design suggestion: communication-to-artifact reconciliation</h3>
+        <p>
+          The system should regularly reconcile new communication activity against existing artifacts.
+        </p>
+        <ul>
+          <li>If an email changes scope, flag the affected SOW or requirements doc.</li>
+          <li>If a call confirms an approval, update the approval state for the relevant artifact.</li>
+          <li>If a message implies billable work, suggest time and billing updates.</li>
+          <li>If feedback indicates future work, create or update a future work candidate.</li>
+        </ul>
+
+        <h3>11.4 New design suggestion: separate raw communications from cleaned knowledge</h3>
+        <p>
+          Architecturally, it will help to distinguish three layers:
+        </p>
+        <pre>Layer 1: Source communications
+- recorded calls
+- transcripts
+- email threads
+- messages
+
+Layer 2: Canonical business artifacts
+- pre-sales decks
+- proposals
+- SOWs
+- amendments
+- requirements docs
+- time trackers
+- invoices
+- action trackers
+
+Layer 3: Derived knowledge views
+- wiki pages
+- decision logs
+- approval summaries
+- future work backlogs
+- daily recap packets</pre>
+        <p>
+          This separation will make the system easier to reason about, audit, and extend later.
+        </p>
+
+        <h3>11.5 New design suggestion: support a commercial artifact progression</h3>
+        <p>
+          Since future work often becomes pre-sales material and then formal delivery scope, the system should explicitly support a progression like:
+        </p>
+        <pre>Future work signal
+  -&gt; qualified opportunity
+  -&gt; proposal input
+  -&gt; pre-sales deck / proposal
+  -&gt; approved scope
+  -&gt; SOW / amendment
+  -&gt; delivery artifact set</pre>
+        <p>
+          This would help bridge the gap between conversational signals, sales material, commercial agreements, and operational execution.
+        </p>
+      </section>
+
+      <section id="mvp">
+        <h2>12. MVP feature set</h2>
+        <div class="strong">
+          The MVP should focus on making the operator’s admin layer dramatically easier, not on solving every aspect of business operations at once.
+        </div>
+
+        <h3>12.1 Suggested MVP features</h3>
+        <ul>
+          <li><strong>Artifact repository + metadata layer</strong> for SOWs, amendments, pre-sales decks, proposals, requirements docs, time trackers, invoices, recorded calls, transcripts, and email threads</li>
+          <li><strong>Morning recap / todo workflow</strong> generated from meetings, open actions, overdue admin work, pending approvals, future work signals, and scheduling needs</li>
+          <li><strong>Post-call / post-email processing workflow</strong> for meeting notes, decisions, approvals, action items, follow-up draft creation, and scheduling facilitation</li>
+          <li><strong>Daily admin closeout workflow</strong> for time logging, wiki cleanup, action reconciliation, approval cleanup, and artifact generation</li>
+          <li><strong>Future work tracking module</strong> fed by calls, emails, and messages</li>
+          <li><strong>Decision / approval reconciliation workflow</strong> that updates source artifacts and clean knowledge views</li>
+          <li><strong>Knowledge/wiki update workflow</strong> that turns raw activity into cleaned operational knowledge</li>
+          <li><strong>Billing support workflow</strong> that links time and operational activity to invoice prep</li>
+        </ul>
+
+        <h3>12.2 MVP success criteria</h3>
+        <ul>
+          <li>The user starts every day with a useful operational recap.</li>
+          <li>Meeting scheduling and follow-up coordination are surfaced at the right moments with minimal manual effort.</li>
+          <li>Most post-meeting admin work is automated or heavily assisted.</li>
+          <li>Time logging becomes easier and more evidence-backed.</li>
+          <li>Important decisions, approvals, and action items stop getting lost.</li>
+          <li>Future work signals are captured consistently.</li>
+          <li>Operational artifacts become queryable and reusable rather than buried in folders and threads.</li>
+        </ul>
+      </section>
+
+      <section id="extensibility">
+        <h2>13. Extensibility direction</h2>
+        <p>
+          Even though the initial system is focused on administrative operations, it should still be designed as a framework with stable extension points.
+        </p>
+        <div class="grid">
+          <div class="card">
+            <h4>Artifact adapters</h4>
+            <p>Custom support for new document classes, billing formats, contract types, and asset repositories.</p>
+          </div>
+          <div class="card">
+            <h4>Workflow plugins</h4>
+            <p>Client-specific or team-specific admin workflows, closeout flows, and reporting cadences.</p>
+          </div>
+          <div class="card">
+            <h4>Knowledge extractors</h4>
+            <p>Custom extraction logic for decisions, actions, commercial terms, and future work signals.</p>
+          </div>
+          <div class="card">
+            <h4>Integration connectors</h4>
+            <p>Google, Microsoft, CRM, billing, or transcription integrations as reusable modules.</p>
+          </div>
+          <div class="card">
+            <h4>Agent roles</h4>
+            <p>Separate agents for recap generation, wiki maintenance, billing support, and future work review.</p>
+          </div>
+          <div class="card">
+            <h4>Policy modules</h4>
+            <p>Approval rules, retention rules, billing controls, and visibility permissions.</p>
+          </div>
+        </div>
+        <p class="muted">
+          File updated in <code>/Users/ctrlaltinnovate/new-pi-project</code> as <code>business-ops-framework-features.html</code>.
+        </p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

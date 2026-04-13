@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accountilytics LLM Wiki / Project Structure Suggestion</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121933;
+      --panel-2: #182041;
+      --text: #e8ecf8;
+      --muted: #aab4d0;
+      --accent: #7dd3fc;
+      --accent-2: #a78bfa;
+      --good: #86efac;
+      --warn: #fcd34d;
+      --border: rgba(255,255,255,0.10);
+      --code: #0a0f1f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #0b1020 0%, #0f1730 100%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .wrap {
+      width: min(1100px, calc(100% - 40px));
+      margin: 32px auto 64px;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(125,211,252,0.12), rgba(167,139,250,0.14));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    h1, h2, h3 { line-height: 1.2; margin: 0 0 14px; }
+    h1 { font-size: 34px; }
+    h2 {
+      margin-top: 28px;
+      font-size: 24px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { font-size: 18px; margin-top: 20px; }
+    p { margin: 10px 0; color: var(--text); }
+    .muted { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: rgba(125,211,252,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(125,211,252,0.22);
+      margin-bottom: 10px;
+    }
+    ul, ol { padding-left: 22px; }
+    li { margin: 7px 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #d6e4ff;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: var(--code);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      overflow: auto;
+      color: #dbeafe;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 6px;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: var(--panel-2);
+      color: #dbeafe;
+      font-weight: 600;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .small { font-size: 14px; }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+    .footer {
+      margin-top: 28px;
+      padding: 18px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="badge">HTML deliverable</div>
+      <h1>LLM Wiki / Project Folder Structure Suggestion</h1>
+      <p><strong>Context reviewed:</strong> <code>temp/llm-wiki.md</code> and the Google Drive folder <code>Accountilytics X Ctrl.Alt.I</code>.</p>
+      <p class="muted">Goal: suggest a very simple, framework-friendly folder model that follows the LLM wiki pattern without overdesigning v1.</p>
+    </section>
+
+    <h2>1) Gist of <code>llm-wiki.md</code></h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Persistent wiki, not just retrieval</h3>
+        <p>The key idea is that the LLM should not rediscover knowledge from raw files every time. Instead, it should maintain a living wiki that accumulates summaries, entities, concepts, links, contradictions, and synthesis over time.</p>
+      </div>
+      <div class="card">
+        <h3>Three-layer model</h3>
+        <p><strong>Raw sources</strong> are immutable. <strong>The wiki</strong> is LLM-authored and continuously updated. <strong>The schema</strong> tells the LLM how to behave, where things go, and how ingest/query/lint should work.</p>
+      </div>
+      <div class="card">
+        <h3>Start simple</h3>
+        <p>The document explicitly says the exact structure should fit the domain. It recommends simplicity first: an index, a log, and a disciplined workflow before adding fancy tooling.</p>
+      </div>
+    </div>
+
+    <h2>2) What the current Accountilytics folder is telling us</h2>
+    <p>The current root has <strong>8 top-level directories</strong> and about <strong>54 files</strong> across them:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Current folder</th>
+          <th>What it really represents</th>
+          <th>Observation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Archive</code></td>
+          <td>Retired / legacy material</td>
+          <td>Useful, but should remain a sink, not a working area.</td>
+        </tr>
+        <tr>
+          <td><code>Clients</code></td>
+          <td>Client-specific raw project material</td>
+          <td>Contains requirement docs, testing files, config sheets. This is source material, not a separate top-level concept in a single-project framework.</td>
+        </tr>
+        <tr>
+          <td><code>Invoices</code></td>
+          <td>Administrative / finance records</td>
+          <td>Operational records should be grouped with admin/finance rather than standing alone too early.</td>
+        </tr>
+        <tr>
+          <td><code>Legal Docs</code></td>
+          <td>Administrative / contractual records</td>
+          <td>Another admin function.</td>
+        </tr>
+        <tr>
+          <td><code>Meeting Materials</code></td>
+          <td>Human-facing deliverables</td>
+          <td>Decks and presentation artifacts belong to outputs/deliverables.</td>
+        </tr>
+        <tr>
+          <td><code>Meeting Transcripts</code></td>
+          <td>Raw source inputs</td>
+          <td>Exactly the kind of immutable source material the LLM wiki model wants.</td>
+        </tr>
+        <tr>
+          <td><code>Technical Docs</code></td>
+          <td>Raw source inputs + working references</td>
+          <td>Backlogs, feature inventories, outlines: mostly source/reference material feeding the wiki.</td>
+        </tr>
+        <tr>
+          <td><code>Weekly Reports</code></td>
+          <td>Final outputs</td>
+          <td>Best grouped with other client-facing outputs.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Core insight</h3>
+      <p>The current structure is organized mostly by <strong>document type</strong> or <strong>business function</strong>. The LLM wiki model works better when organized by <strong>content role in the workflow</strong>:</p>
+      <ul>
+        <li><strong>What comes in</strong> → raw sources</li>
+        <li><strong>What the LLM maintains</strong> → wiki</li>
+        <li><strong>What humans send/share/use</strong> → outputs</li>
+        <li><strong>What must be kept for business/admin reasons</strong> → admin</li>
+        <li><strong>What is no longer active</strong> → archive</li>
+      </ul>
+    </div>
+
+    <h2>3) Recommended v1 structure: simple on purpose</h2>
+    <p><strong>My recommendation:</strong> use only <strong>5 top-level directories</strong> plus one schema file at the root.</p>
+    <pre>Accountilytics/
+  AGENTS.md
+  README.md
+
+  admin/
+    legal/
+    finance/
+
+  raw/
+    meetings/
+    technical/
+    clients/
+
+  wiki/
+    index.md
+    log.md
+    overview.md
+    topics/
+    entities/
+    projects/
+
+  outputs/
+    reports/
+    decks/
+
+  archive/</pre>
+
+    <div class="grid">
+      <div class="card">
+        <h3><code>admin/</code></h3>
+        <p>For contracts, invoices, privacy docs, payment records, and any non-wiki business paperwork.</p>
+      </div>
+      <div class="card">
+        <h3><code>raw/</code></h3>
+        <p>For immutable input material. This is the source of truth the LLM reads from but does not rewrite.</p>
+      </div>
+      <div class="card">
+        <h3><code>wiki/</code></h3>
+        <p>The missing layer today. This is where the LLM builds durable knowledge: summaries, entities, decisions, systems, workflows, and synthesis pages.</p>
+      </div>
+      <div class="card">
+        <h3><code>outputs/</code></h3>
+        <p>For reports, decks, client-facing materials, and shareable artifacts generated from the wiki or project work.</p>
+      </div>
+      <div class="card">
+        <h3><code>archive/</code></h3>
+        <p>For retired experiments, duplicates, old exports, and superseded materials.</p>
+      </div>
+      <div class="card">
+        <h3><code>AGENTS.md</code></h3>
+        <p>The schema/instruction file that tells the LLM how to ingest raw material, update the wiki, answer questions, and keep the structure consistent.</p>
+      </div>
+    </div>
+
+    <h2>4) Why this is the right level of simplicity</h2>
+    <ul>
+      <li>It directly mirrors the LLM wiki concept: <strong>raw → wiki → outputs</strong>.</li>
+      <li>It keeps admin separate so the wiki does not become a junk drawer.</li>
+      <li>It avoids too many top-level file-type folders like <code>Meeting Transcripts</code>, <code>Technical Docs</code>, and <code>Weekly Reports</code>.</li>
+      <li>It is reusable as a framework across clients and projects.</li>
+      <li>It leaves room to grow without forcing complexity on day one.</li>
+    </ul>
+
+    <div class="card">
+      <h3>Important constraint for v1</h3>
+      <p class="warn">Do not add more top-level directories until there is repeated pain.</p>
+      <p>The framework should prefer <strong>subfolders inside existing roles</strong> before creating a new root category.</p>
+    </div>
+
+    <h2>5) Mapping from current Accountilytics folders to the new framework</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Current</th>
+          <th>Suggested new home</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Legal Docs</code></td>
+          <td><code>admin/legal/</code></td>
+          <td>Contracts and legal records are admin, not knowledge pages.</td>
+        </tr>
+        <tr>
+          <td><code>Invoices</code></td>
+          <td><code>admin/finance/</code></td>
+          <td>Operational finance records belong together.</td>
+        </tr>
+        <tr>
+          <td><code>Meeting Transcripts</code></td>
+          <td><code>raw/meetings/</code></td>
+          <td>These are canonical raw inputs for ingestion.</td>
+        </tr>
+        <tr>
+          <td><code>Technical Docs</code></td>
+          <td><code>raw/technical/</code></td>
+          <td>Backlogs, inventories, outlines, and reference docs feed the wiki.</td>
+        </tr>
+        <tr>
+          <td><code>Clients</code></td>
+          <td><code>raw/clients/</code></td>
+          <td>Requirement docs, test files, and client-specific artifacts are raw project inputs.</td>
+        </tr>
+        <tr>
+          <td><code>Meeting Materials</code></td>
+          <td><code>outputs/decks/</code></td>
+          <td>These are presentation-oriented deliverables.</td>
+        </tr>
+        <tr>
+          <td><code>Weekly Reports</code></td>
+          <td><code>outputs/reports/</code></td>
+          <td>These are final shareable outputs.</td>
+        </tr>
+        <tr>
+          <td><code>Archive</code></td>
+          <td><code>archive/</code></td>
+          <td>Retired material should stay retired.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>6) Suggested approach for understanding the core directories in any future project</h2>
+    <ol>
+      <li><strong>Inventory the current folders</strong> and list representative files.</li>
+      <li><strong>Classify by workflow role</strong>, not by file type: incoming source, knowledge layer, output, admin, archive.</li>
+      <li><strong>Ask what the LLM should own</strong>. If the LLM should continuously rewrite it, it belongs in <code>wiki/</code>.</li>
+      <li><strong>Ask what must remain immutable</strong>. If it is a source or evidence artifact, it belongs in <code>raw/</code>.</li>
+      <li><strong>Collapse similar directories</strong>. For example, decks + reports are both outputs; invoices + legal docs are both admin.</li>
+      <li><strong>Create new top-level folders only when behavior differs materially</strong>. If two categories have the same lifecycle, they probably do not need separate roots.</li>
+    </ol>
+
+    <div class="card">
+      <h3>A practical test</h3>
+      <p>If a folder answers one of these questions, it is probably core:</p>
+      <ul>
+        <li><strong>Where do new materials land?</strong> → <code>raw/</code></li>
+        <li><strong>Where does synthesized knowledge live?</strong> → <code>wiki/</code></li>
+        <li><strong>Where do client-ready artifacts go?</strong> → <code>outputs/</code></li>
+        <li><strong>Where do contracts and financial records live?</strong> → <code>admin/</code></li>
+        <li><strong>Where do old things go?</strong> → <code>archive/</code></li>
+      </ul>
+    </div>
+
+    <h2>7) Reusable prompt you can give an LLM</h2>
+    <pre>You are helping design a minimal LLM wiki/project folder structure for a reusable framework.
+
+Use the LLM wiki pattern:
+- Raw sources are immutable and read-only.
+- The wiki is LLM-maintained and accumulates summaries, entities, concepts, decisions, and synthesis over time.
+- A schema file (AGENTS.md or equivalent) defines workflows and conventions.
+- Keep the structure as simple as possible at the start.
+
+Your task:
+1. Review the existing project folder inventory below.
+2. Infer the smallest set of top-level directories needed.
+3. Organize by workflow role, not by file type.
+4. Separate:
+   - raw inputs / source-of-truth material
+   - LLM-maintained wiki knowledge
+   - human-facing outputs / deliverables
+   - admin / legal / finance records
+   - archive / retired material
+5. Do NOT preserve legacy folder sprawl unless there is a strong reason.
+6. Suggest a v1 structure that is framework-friendly and extensible.
+
+Return:
+- A recommended top-level folder tree
+- A mapping from old folders to new folders
+- A short rationale for each top-level folder
+- What should exist at the root (for example AGENTS.md, README.md)
+- What should NOT be created yet
+- Simple naming rules
+- A lightweight migration plan
+
+Current folder inventory:
+- Archive
+- Clients
+- Invoices
+- Legal Docs
+- Meeting Materials
+- Meeting Transcripts
+- Technical Docs
+- Weekly Reports
+
+Representative files and patterns:
+- Meeting transcript summaries and transcript .txt files
+- Approved backlog markdown / gsheet
+- Feature inventory markdown
+- Sales deck outlines and HTML decks
+- Weekly report HTML files
+- Legal retainer docs
+- Invoice PDFs
+- Client requirement docs, test files, config sheets
+
+Constraints:
+- Prefer 4-6 top-level folders max
+- Keep subfolders minimal until usage proves they are needed
+- The wiki layer must be explicit because that is the compounding knowledge asset
+- Optimize for clarity, maintainability, and framework reuse, not completeness on day one</pre>
+
+    <h2>8) My final recommendation</h2>
+    <div class="card">
+      <p><strong>Use this as the starter framework:</strong></p>
+      <pre>root/
+  AGENTS.md
+  README.md
+  admin/
+  raw/
+  wiki/
+  outputs/
+  archive/</pre>
+      <p>Then only add second-level folders when there is consistent volume.</p>
+      <p class="good"><strong>Best principle:</strong> top-level directories should represent <em>roles in the knowledge workflow</em>, not document formats.</p>
+    </div>
+
+    <div class="footer small">
+      <strong>File basis used for this suggestion:</strong><br>
+      <code>temp/llm-wiki.md</code><br>
+      <code>/Users/ctrlaltinnovate/Library/CloudStorage/GoogleDrive-ctrlalti.consulting@gmail.com/My Drive/Accountilytics X Ctrl.Alt.I</code>
+    </div>
+  </div>
+</body>
+</html>

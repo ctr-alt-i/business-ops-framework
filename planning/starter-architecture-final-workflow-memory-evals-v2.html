@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Starter Architecture — Workflow Framework with LLM Memory, Feature Scope + Evals</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121933;
+      --panel-2: #182347;
+      --border: #2d3d66;
+      --text: #e8efff;
+      --muted: #a0b2da;
+      --accent: #7dc7ff;
+      --accent-2: #8ef3cc;
+      --warn: #ffd57a;
+      --good: #8defab;
+      --code: #0d1530;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px 20px 72px;
+      background: linear-gradient(180deg, #070d18 0%, #0b1020 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.62;
+    }
+    .wrap { max-width: 1160px; margin: 0 auto; }
+    .hero, section {
+      background: rgba(18, 25, 51, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    h1, h2, h3, h4 { line-height: 1.2; margin-top: 0; }
+    h1 { font-size: 2rem; margin-bottom: 10px; }
+    h2 { font-size: 1.38rem; margin-bottom: 12px; }
+    h3 { font-size: 1.05rem; color: var(--accent-2); margin-bottom: 8px; }
+    h4 { font-size: 0.95rem; color: var(--accent); margin-bottom: 8px; }
+    p, li { color: var(--text); }
+    .muted { color: var(--muted); }
+    .strong {
+      margin: 14px 0 0;
+      padding: 14px 16px;
+      border-left: 3px solid var(--accent);
+      background: rgba(125, 199, 255, 0.08);
+      border-radius: 10px;
+    }
+    .callout {
+      margin: 14px 0 0;
+      padding: 14px 16px;
+      border-left: 3px solid var(--warn);
+      background: rgba(255, 213, 122, 0.08);
+      border-radius: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .card {
+      background: rgba(24, 35, 71, 0.86);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: var(--code);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 6px;
+      color: #dce8ff;
+    }
+    pre {
+      margin: 14px 0 0;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--code);
+      border: 1px solid var(--border);
+      overflow: auto;
+      white-space: pre-wrap;
+      line-height: 1.46;
+      color: #d9e6ff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: rgba(125, 199, 255, 0.08);
+      color: var(--accent);
+    }
+    ul, ol { padding-left: 20px; }
+    .good { color: var(--good); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Final Starter Architecture + Pre-Build Package</h1>
+      <p class="muted">
+        Final revision based on the earlier architecture work, the LLM wiki pattern, the Accountilytics structure review,
+        the clarified product direction, and the original <code>business-ops-framework-features.html</code> requirements source.
+        This should not be framed as just a wiki framework. It should be framed as a
+        <strong>workflow framework powered by an LLM-maintained memory layer</strong>, with the features document distilled into a smaller v1 build scope.
+      </p>
+      <div class="strong">
+        <strong>Final product framing:</strong> build an <strong>LLM-native business operations workflow framework</strong> that uses
+        <strong>managed wiki workspaces as persistent memory</strong> for ingest, synthesis, reporting, and operational workflows.
+      </div>
+    </div>
+
+    <section>
+      <h2>1. Final architecture thesis</h2>
+      <p>
+        The wiki is not the end product. The wiki is the memory substrate that allows workflows to become more useful over time.
+        The workflows are the user-facing product layer.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3>Source layer</h3>
+          <p>Raw, immutable business evidence: transcripts, emails, docs, requirements, decks, invoices, legal records, and other source material.</p>
+        </div>
+        <div class="card">
+          <h3>Memory layer</h3>
+          <p>LLM-maintained wiki pages, indexes, logs, summaries, entity pages, project pages, and ops pages that compile source material into durable context.</p>
+        </div>
+        <div class="card">
+          <h3>Workflow layer</h3>
+          <p>Reusable workflow definitions that pull from memory and sources to create operational outputs, suggested actions, updates, and automations.</p>
+        </div>
+        <div class="card">
+          <h3>Interface layer</h3>
+          <p>Pi first, then later schedulers, APIs, and possibly a web app. The interface should call the framework, not contain it.</p>
+        </div>
+      </div>
+
+      <pre>raw sources -> wiki memory -> workflows -> outputs / actions</pre>
+
+      <div class="strong">
+        <strong>Final design rule:</strong> the <strong>wiki exists to support workflows</strong>, and the <strong>workflows exist to turn memory into action</strong>.
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Final suggested repository structure</h2>
+      <pre>business-ops-framework/
+├─ apps/
+│  └─ pi-console/                         # thin operator shell for Pi
+│
+├─ src/
+│  ├─ core/
+│  │  ├─ domain/
+│  │  ├─ contracts/
+│  │  ├─ use-cases/
+│  │  └─ types/
+│  │
+│  ├─ modules/
+│  │  ├─ workspace/                       # workspace lifecycle and path rules
+│  │  ├─ ingest/                          # source ingestion and classification
+│  │  ├─ wiki/                            # page updates, index, log, lint, linking
+│  │  ├─ operations/                      # decisions, tasks, approvals, future work
+│  │  ├─ workflows/                       # workflow definitions and runner
+│  │  └─ outputs/                         # reports, recaps, decks, summaries
+│  │
+│  ├─ adapters/
+│  │  ├─ pi/
+│  │  ├─ email/
+│  │  ├─ calendar/
+│  │  ├─ docs/
+│  │  ├─ transcription/
+│  │  └─ messaging/
+│  │
+│  ├─ infra/
+│  │  ├─ persistence/
+│  │  ├─ search/
+│  │  ├─ scheduler/
+│  │  ├─ logging/
+│  │  └─ config/
+│  │
+│  └─ index.ts
+│
+├─ workspaces/
+│  └─ example-engagement/
+│     ├─ AGENTS.md
+│     ├─ README.md
+│     ├─ raw/
+│     ├─ wiki/
+│     ├─ outputs/
+│     ├─ admin/
+│     └─ archive/
+│
+├─ evals/
+│  ├─ fixtures/
+│  ├─ goldens/
+│  ├─ suites/
+│  └─ rubrics/
+│
+├─ resources/
+│  ├─ templates/
+│  ├─ policies/
+│  └─ examples/
+│
+├─ tests/
+├─ scripts/
+└─ README.md</pre>
+
+      <div class="callout">
+        <strong>Important update:</strong> <code>evals/</code> should now be a first-class top-level directory from day one.
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Final suggested workspace structure</h2>
+      <pre>workspaces/example-engagement/
+├─ AGENTS.md
+├─ README.md
+│
+├─ raw/
+│  ├─ meetings/
+│  ├─ technical/
+│  ├─ communications/
+│  └─ clients/
+│
+├─ wiki/
+│  ├─ index.md
+│  ├─ log.md
+│  ├─ overview.md
+│  ├─ sources/
+│  ├─ entities/
+│  ├─ projects/
+│  ├─ topics/
+│  └─ ops/
+│     ├─ decision-log.md
+│     ├─ action-tracker.md
+│     └─ future-work.md
+│
+├─ outputs/
+│  ├─ reports/
+│  ├─ recaps/
+│  └─ decks/
+│
+├─ admin/
+│  ├─ legal/
+│  └─ finance/
+│
+└─ archive/</pre>
+
+      <div class="strong">
+        <strong>Workspace rule:</strong> organize by <strong>workflow role</strong>, not by random file type proliferation.
+      </div>
+    </section>
+
+    <section>
+      <h2>4. First-class modules to build</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Purpose</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>workspace</strong></td>
+            <td>Initializes and validates workspaces, manages schema files, and enforces path conventions.</td>
+            <td class="good"><strong>Phase 1</strong></td>
+          </tr>
+          <tr>
+            <td><strong>ingest</strong></td>
+            <td>Reads raw sources, classifies them, creates source summaries, and orchestrates wiki updates.</td>
+            <td class="good"><strong>Phase 1</strong></td>
+          </tr>
+          <tr>
+            <td><strong>wiki</strong></td>
+            <td>Creates and updates pages, maintains links, index, log, and lint behavior.</td>
+            <td class="good"><strong>Phase 1</strong></td>
+          </tr>
+          <tr>
+            <td><strong>operations</strong></td>
+            <td>Extracts decisions, approvals, actions, future work, and related operational facts.</td>
+            <td class="good"><strong>Phase 2</strong></td>
+          </tr>
+          <tr>
+            <td><strong>workflows</strong></td>
+            <td>Defines workflow specs, triggers, context builders, steps, outputs, and run logs.</td>
+            <td class="good"><strong>Phase 2</strong></td>
+          </tr>
+          <tr>
+            <td><strong>outputs</strong></td>
+            <td>Generates weekly reports, meeting recaps, status packets, and other artifacts from memory and sources.</td>
+            <td class="good"><strong>Phase 2</strong></td>
+          </tr>
+          <tr>
+            <td><strong>pi adapter</strong></td>
+            <td>Exposes framework use-cases into Pi commands, tools, and skills.</td>
+            <td><strong>Phase 3</strong></td>
+          </tr>
+          <tr>
+            <td><strong>external adapters</strong></td>
+            <td>Imports email, transcripts, docs, calendar, and messaging context into the raw source layer.</td>
+            <td><strong>Phase 4</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. Updated development order</h2>
+      <ol>
+        <li><strong>Lock the product framing and v1 scope:</strong> use the distilled feature scope from <code>business-ops-framework-features.html</code> to confirm workspace scope, first source type, and first workflow set.</li>
+        <li><strong>Create the repo skeleton:</strong> initialize the repository with <code>src/</code>, <code>workspaces/</code>, <code>evals/</code>, <code>resources/</code>, and <code>apps/pi-console/</code>.</li>
+        <li><strong>Implement the workspace module:</strong> init, validate, and load workspace structure plus <code>AGENTS.md</code>.</li>
+        <li><strong>Implement one-source-at-a-time ingest:</strong> start with meeting transcripts or a similarly high-value source.</li>
+        <li><strong>Implement wiki maintenance:</strong> source summaries, <code>index.md</code>, <code>log.md</code>, <code>overview.md</code>, and a few durable page categories.</li>
+        <li><strong>Implement operations extraction:</strong> decisions, action items, approvals, and future work.</li>
+        <li><strong>Implement the workflow runtime:</strong> workflow definitions, runner, run logging, context assembly, and manual triggers.</li>
+        <li><strong>Implement the first outputs:</strong> meeting recap, weekly report, and a simple daily briefing or status summary.</li>
+        <li><strong>Wire Pi into the framework:</strong> keep Pi thin and let it trigger the use-cases above.</li>
+        <li><strong>Add linting and health checks:</strong> stale claims, contradictions, missing pages, and missing links.</li>
+        <li><strong>Add the first integrations only after the file-based workflow works:</strong> transcript import, email import, and calendar context are the best first candidates.</li>
+        <li><strong>Add scheduled runs and retrieval upgrades last:</strong> only after the manual loop is already useful.</li>
+      </ol>
+
+      <div class="strong">
+        <strong>Recommended build sequence in one line:</strong> <strong>scope -> repo -> workspace -> ingest -> wiki -> extraction -> workflows -> outputs -> Pi -> adapters -> automation.</strong>
+      </div>
+    </section>
+
+    <section>
+      <h2>6. The artifacts you should have before the next build session</h2>
+      <p>
+        Before starting a fresh implementation session and initializing the git repo, I would want a small but complete planning packet.
+        These artifacts do not need to be perfect. They just need to be clear enough to scaffold against and evaluate against.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Artifact</th>
+            <th>What it should contain</th>
+            <th>Why it matters</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Product framing note</strong></td>
+            <td>One short document stating what the framework is, what it is not, and what v1 is trying to prove.</td>
+            <td>Keeps the project from drifting between “wiki tool,” “agent shell,” and “workflow platform.”</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>2. Features source reference</strong></td>
+            <td>The original <code>business-ops-framework-features.html</code> kept in the planning packet as the source requirements document.</td>
+            <td>This preserves the full product ambition and prevents the architecture from narrowing the product too much.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>3. V1 feature scope distillation</strong></td>
+            <td>A compressed <code>v1-feature-scope.md</code> derived from the features doc with sections for must-have, next, later, non-goals, and success criteria.</td>
+            <td>Turns a large feature inventory into a buildable scope for scaffolding and eval design.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>4. Workspace scope decision</strong></td>
+            <td>Whether a workspace equals a client, an engagement, or a project.</td>
+            <td>This affects paths, naming, and eval design.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>5. V1 workflow definitions</strong></td>
+            <td>Short specs for the first 2–3 workflows, ideally post-call processing, weekly reporting, and morning briefing.</td>
+            <td>Workflows are the product layer; they should shape the build early.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>6. Workspace schema draft</strong></td>
+            <td>A draft <code>AGENTS.md</code> or schema note that defines folder rules, page conventions, ingest behavior, and naming.</td>
+            <td>This turns the LLM into a disciplined maintainer.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>7. Wiki page template set</strong></td>
+            <td>Examples for source summary pages, entity pages, project pages, overview pages, and ops pages.</td>
+            <td>Prevents structure thrash during implementation.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>8. Operational extraction schema</strong></td>
+            <td>Definitions for decision, approval, action item, future work, stakeholder, and risk objects.</td>
+            <td>Needed for extraction and eval consistency.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>9. Sample raw corpus</strong></td>
+            <td>A small but realistic set of source files: transcripts, notes, technical docs, maybe an email thread or requirement doc.</td>
+            <td>You need real inputs to build the scaffolding around.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>10. Expected output examples</strong></td>
+            <td>At least one gold example each for a meeting recap and a weekly report.</td>
+            <td>These become golden references for evals.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>11. Naming and frontmatter conventions</strong></td>
+            <td>Simple rules for filenames, dates, IDs, tags, and markdown frontmatter.</td>
+            <td>Keeps the workspace legible and Obsidian-friendly.</td>
+            <td><strong>Should have</strong></td>
+          </tr>
+          <tr>
+            <td><strong>12. Evals plan</strong></td>
+            <td>The first set of eval cases, pass/fail criteria, and where fixtures and goldens will live.</td>
+            <td>Lets development proceed with regression protection from the start.</td>
+            <td class="good"><strong>Must have</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>How to treat the features doc:</strong> keep <code>business-ops-framework-features.html</code> as the full requirements source,
+        but do not use it as the raw implementation backlog. Distill it into <code>v1-feature-scope.md</code> so the scaffold and evals stay focused.
+      </div>
+    </section>
+
+    <section>
+      <h2>7. Suggested pre-build artifact package</h2>
+      <p>
+        If you want a concrete set of files to bring into the next session, I would recommend preparing something like this:
+      </p>
+
+      <pre>planning/
+├─ 00-product-framing.md
+├─ 01-features-source-reference.md
+├─ 02-workspace-scope.md
+├─ 03-v1-workflows.md
+├─ 04-workspace-schema-draft.md
+├─ 05-wiki-page-templates.md
+├─ 06-extraction-schema.md
+├─ 07-evals-plan.md
+├─ v1-feature-scope.md
+└─ sources/
+   └─ business-ops-framework-features.html
+
+sample-data/
+├─ raw/
+│  ├─ meetings/
+│  │  ├─ meeting-001-transcript.md
+│  │  └─ meeting-002-transcript.md
+│  ├─ technical/
+│  │  └─ requirements-v1.md
+│  └─ communications/
+│     └─ email-thread-001.md
+│
+└─ expected/
+   ├─ wiki/
+   │  ├─ sources/meeting-001-summary.md
+   │  ├─ ops/decision-log.md
+   │  ├─ ops/action-tracker.md
+   │  └─ overview.md
+   └─ outputs/
+      ├─ recaps/meeting-001-recap.md
+      └─ reports/weekly-report-001.md</pre>
+
+      <div class="callout">
+        <strong>This is the minimum viable planning packet:</strong> enough to scaffold the repo, define the workspace, and write evals before the code gets complicated.
+      </div>
+    </section>
+
+    <section>
+      <h2>8. Evals strategy from day one</h2>
+      <p>
+        Since you want to begin development with evals, I would make evals part of the architecture instead of something added later.
+      </p>
+
+      <h3>8.1 What to evaluate first</h3>
+      <ul>
+        <li><strong>Ingest evals:</strong> does a source create the expected summary page, log entry, and index update?</li>
+        <li><strong>Extraction evals:</strong> are decisions, actions, approvals, and future work correctly captured from a known input?</li>
+        <li><strong>Wiki update evals:</strong> are the right pages touched, linked, or created?</li>
+        <li><strong>Output evals:</strong> does the workflow generate an acceptable meeting recap or weekly report?</li>
+        <li><strong>Lint evals:</strong> can the system detect obvious contradictions, missing links, or stale pages in a controlled fixture?</li>
+      </ul>
+
+      <h3>8.2 Recommended eval folder shape</h3>
+      <pre>evals/
+├─ fixtures/
+│  ├─ raw/
+│  └─ workspaces/
+├─ goldens/
+│  ├─ wiki/
+│  └─ outputs/
+├─ suites/
+│  ├─ ingest/
+│  ├─ extraction/
+│  ├─ wiki/
+│  ├─ workflows/
+│  └─ lint/
+└─ rubrics/
+   ├─ meeting-recap.md
+   └─ weekly-report.md</pre>
+
+      <h3>8.3 Goldens vs rubrics</h3>
+      <div class="grid">
+        <div class="card">
+          <h3>Use goldens when structure matters</h3>
+          <p>For index updates, decision extraction, action items, page creation, and deterministic fields.</p>
+        </div>
+        <div class="card">
+          <h3>Use rubrics when quality matters</h3>
+          <p>For recaps, reports, summaries, and other outputs where exact text match is too strict.</p>
+        </div>
+      </div>
+
+      <div class="strong">
+        <strong>Eval rule:</strong> every new workflow should come with at least one fixture, one expected wiki effect, and one expected output artifact.
+      </div>
+    </section>
+
+    <section>
+      <h2>9. What I would want decided before we open the next session</h2>
+      <ol>
+        <li><strong>Workspace scope:</strong> one workspace per client, per engagement, or per project?</li>
+        <li><strong>First source type:</strong> transcript, technical doc, or email thread?</li>
+        <li><strong>First workflow:</strong> if we only build one first, should it be post-call processing, weekly reporting, or morning briefing?</li>
+        <li><strong>First outputs:</strong> do we lock meeting recap and weekly report as the first required outputs?</li>
+        <li><strong>Stack:</strong> do we proceed with TypeScript/Node and Pi as the first operator shell?</li>
+      </ol>
+
+      <div class="callout">
+        <strong>My default assumptions if we do not decide otherwise:</strong> one workspace per <strong>engagement</strong>, <strong>meeting transcripts first</strong>,
+        <strong>post-call processing as workflow #1</strong>, <strong>meeting recap + weekly report as first outputs</strong>, and <strong>TypeScript/Node + Pi</strong>.
+      </div>
+    </section>
+
+    <section>
+      <h2>10. Final recommendation for the next session</h2>
+      <p>
+        When you start the next session, the ideal flow is:
+      </p>
+      <ol>
+        <li>Initialize the git repo.</li>
+        <li>Bring in the planning packet, the features source reference, the distilled <code>v1-feature-scope.md</code>, and the sample corpus.</li>
+        <li>Scaffold the repository structure.</li>
+        <li>Create one example workspace.</li>
+        <li>Add the initial <code>AGENTS.md</code>.</li>
+        <li>Set up the evals directory and first fixture/golden cases.</li>
+        <li>Implement workspace initialization and one-source ingest.</li>
+      </ol>
+
+      <div class="strong">
+        <strong>Final shortest version:</strong> before coding, gather a small planning packet, a small source corpus, and a small eval set. Then scaffold the repo around
+        <strong>workspace -> memory -> workflow -> output</strong> and let Pi sit on top as the operator shell.
+      </div>
+      <p class="muted">
+        Suggested output file: <code>starter-architecture-final-workflow-memory-evals-v2.html</code>
+      </p>
+    </section>
+  </div>
+</body>
+</html>
