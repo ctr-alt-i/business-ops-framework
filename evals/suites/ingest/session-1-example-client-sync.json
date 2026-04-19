@@ -1,0 +1,19 @@
+{
+  "name": "session-1-example-client-sync-ingest",
+  "description": "Deterministic file-based ingest with structured source summarization for one sanitized meeting transcript.",
+  "fixture": {
+    "workspace": "evals/fixtures/workspaces/example-engagement",
+    "source": "evals/fixtures/raw/meetings/2026-04-10-example-client-sync.md",
+    "analysisFixture": "evals/fixtures/analyses/meetings/2026-04-10-example-client-sync.json",
+    "kind": "meeting-transcript",
+    "title": "Example Client Sync",
+    "sourceDate": "2026-04-10",
+    "ingestedAt": "2026-04-10T17:30:00.000Z"
+  },
+  "expected": {
+    "summary": "evals/goldens/wiki/ingest-example-client-sync/sources/2026-04-10-example-client-sync.md",
+    "analysis": "evals/goldens/wiki/ingest-example-client-sync/sources/2026-04-10-example-client-sync.analysis.md",
+    "index": "evals/goldens/wiki/ingest-example-client-sync/index.md",
+    "log": "evals/goldens/wiki/ingest-example-client-sync/log.md"
+  }
+}

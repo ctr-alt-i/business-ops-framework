@@ -1,0 +1,35 @@
+{
+  "name": "pinnacle-logistics-answerability",
+  "description": "Wiki answerability checks against generated Pinnacle Logistics wiki artifacts only.",
+  "fixture": {
+    "workspace": "evals/fixtures/workspaces/example-engagement",
+    "sources": [
+      {
+        "path": "evals/fixtures/raw/meetings/pinnacle-logistics/2026-03-04-discovery.md",
+        "analysisFixture": "evals/fixtures/analyses/meetings/pinnacle-logistics/2026-03-04-discovery.json",
+        "kind": "meeting-transcript",
+        "title": "Pinnacle Logistics Discovery",
+        "sourceDate": "2026-03-04",
+        "ingestedAt": "2026-03-04T16:00:00.000Z"
+      },
+      {
+        "path": "evals/fixtures/raw/meetings/pinnacle-logistics/2026-03-11-follow-up.md",
+        "analysisFixture": "evals/fixtures/analyses/meetings/pinnacle-logistics/2026-03-11-follow-up.json",
+        "kind": "meeting-transcript",
+        "title": "Pinnacle Logistics Follow-up",
+        "sourceDate": "2026-03-11",
+        "ingestedAt": "2026-03-11T16:00:00.000Z"
+      },
+      {
+        "path": "evals/fixtures/raw/meetings/pinnacle-logistics/2026-03-24-proposal.md",
+        "analysisFixture": "evals/fixtures/analyses/meetings/pinnacle-logistics/2026-03-24-proposal.json",
+        "kind": "meeting-transcript",
+        "title": "Pinnacle Logistics Proposal Walkthrough",
+        "sourceDate": "2026-03-24",
+        "ingestedAt": "2026-03-24T16:00:00.000Z"
+      }
+    ]
+  },
+  "questions": "evals/fixtures/questions/pinnacle-logistics-sales-cycle.md",
+  "answers": "evals/goldens/answers/pinnacle-logistics-sales-cycle.json"
+}

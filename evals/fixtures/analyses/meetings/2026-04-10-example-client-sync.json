@@ -1,0 +1,94 @@
+{
+  "sourceSummary": {
+    "summary": "The meeting focused on Example Client Sync: Weekly report draft as the primary v1 deliverable; Meeting recap draft after each call; Running action-item tracker in the workspace; Transcript process notes upload. Immediate follow-up due by Tuesday. Deferred or out-of-scope items included Dashboard work in v1 and Invoice support until the recap workflow is stable. Key decision: Prioritize the weekly report pilot as the primary v1 deliverable. Immediate next step: Maintain a running list of action items in the workspace.",
+    "participants": [
+      { "name": "Ava", "role": "Consultant" },
+      { "name": "Riley", "role": "Client Ops" },
+      { "name": "Jordan", "role": "Client PM" }
+    ],
+    "keyFacts": [
+      {
+        "label": "Primary v1 deliverable",
+        "value": "Weekly report",
+        "category": "scope"
+      }
+    ],
+    "scopeIn": [
+      "Weekly report draft as the primary v1 deliverable",
+      "Meeting recap draft after each call",
+      "Running action-item tracker in the workspace",
+      "Transcript process notes upload",
+      "Sample recap artifact"
+    ],
+    "scopeOut": [
+      "Dashboard work in v1",
+      "Invoice support until the recap workflow is stable"
+    ],
+    "commercialNotes": [],
+    "timelineNotes": [
+      "Immediate follow-up due by Tuesday"
+    ],
+    "decisionsAndSignals": [
+      "Prioritize the weekly report pilot as the primary v1 deliverable.",
+      "Keep dashboard work out of v1."
+    ],
+    "openQuestions": [],
+    "nextSteps": [
+      "Maintain a running list of action items in the workspace.",
+      "Upload the current transcript process notes and a sample recap."
+    ]
+  },
+  "decisions": [
+    {
+      "summary": "Prioritize the weekly report pilot as the primary v1 deliverable.",
+      "status": "confirmed"
+    },
+    {
+      "summary": "Keep dashboard work out of v1.",
+      "status": "confirmed"
+    }
+  ],
+  "actionItems": [
+    {
+      "summary": "Maintain a running list of action items in the workspace.",
+      "owner": "Jordan / workspace team",
+      "status": "open"
+    },
+    {
+      "summary": "Upload the current transcript process notes and a sample recap.",
+      "owner": "Ava",
+      "dueDate": "Tuesday",
+      "status": "open"
+    }
+  ],
+  "futureWorkItems": [
+    {
+      "summary": "Capture invoice support as future work once the recap workflow is stable.",
+      "category": "follow-on",
+      "status": "open"
+    }
+  ],
+  "approvalSignals": [],
+  "risks": [],
+  "stakeholders": [
+    {
+      "name": "Ava",
+      "role": "Consultant",
+      "relatedSourceIds": ["2026-04-10-example-client-sync"]
+    },
+    {
+      "name": "Riley",
+      "role": "Client Ops",
+      "relatedSourceIds": ["2026-04-10-example-client-sync"]
+    },
+    {
+      "name": "Jordan",
+      "role": "Client PM",
+      "relatedSourceIds": ["2026-04-10-example-client-sync"]
+    }
+  ],
+  "scopeChanges": [],
+  "commercialSnapshots": [],
+  "timelineMilestones": [],
+  "rollupHints": []
+}

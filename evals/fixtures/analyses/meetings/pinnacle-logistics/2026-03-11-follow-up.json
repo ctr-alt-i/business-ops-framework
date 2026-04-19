@@ -1,0 +1,162 @@
+{
+  "sourceSummary": {
+    "summary": "The meeting focused on Pinnacle Logistics AP Automation: Exception handling and human review queue; Slack approval workflow for invoice approvals. Slack approval workflow increment: $3,000 build and $300 monthly. Timeline changed from six weeks to eight weeks after adding Slack approvals. Deferred or out-of-scope items included GoHighLevel work for this engagement (deferred to a separate Q3 conversation). Key decision: Add a Slack approval workflow to remove the post-ingestion approval bottleneck. Immediate next step: Send the proposal to Sarah Chen and Patricia Walsh.",
+    "participants": [
+      { "name": "Bryan Mendez", "organization": "CTRL.ALT.I", "role": "Solution Lead" },
+      { "name": "Sarah Chen", "organization": "Pinnacle Logistics", "role": "Director of Operations" },
+      { "name": "Patricia Walsh", "organization": "Pinnacle Logistics", "role": "CFO" }
+    ],
+    "keyFacts": [
+      { "label": "Orchestration layer", "value": "N8N", "category": "system" },
+      { "label": "Fiscal year close", "value": "June 30", "category": "timeline" },
+      { "label": "Kickoff target", "value": "April 1", "category": "timeline" }
+    ],
+    "scopeIn": [
+      "Exception handling and human review queue",
+      "Slack approval workflow for invoice approvals"
+    ],
+    "scopeOut": [
+      "GoHighLevel work for this engagement (deferred to a separate Q3 conversation)"
+    ],
+    "commercialNotes": [
+      "Slack approval workflow increment: $3,000 build and $300 monthly",
+      "Revised price: $24,000 build and $1,800 monthly"
+    ],
+    "timelineNotes": [
+      "Timeline changed from six weeks to eight weeks after adding Slack approvals",
+      "Target deployment before the June 30 fiscal year close",
+      "Kickoff target: April 1",
+      "Planned phased delivery: Phase 1 ingestion, Phase 2 approvals, Phase 3 production cutover"
+    ],
+    "decisionsAndSignals": [
+      "Add a Slack approval workflow to remove the post-ingestion approval bottleneck.",
+      "Keep GoHighLevel out of the current engagement and defer it to a separate Q3 track.",
+      "Proceed with N8N as the orchestration layer as long as the client retains ownership and avoids lock-in.",
+      "Structure delivery in three phases so the client sees ingestion working in the first three weeks.",
+      "Patricia Walsh reacted positively to the Slack approval workflow addition."
+    ],
+    "openQuestions": [],
+    "nextSteps": [
+      "Send the proposal to Sarah Chen and Patricia Walsh.",
+      "Structure the proposal as a phased delivery plan with working ingestion in the first three weeks."
+    ]
+  },
+  "decisions": [
+    {
+      "summary": "Add a Slack approval workflow to remove the post-ingestion approval bottleneck.",
+      "status": "confirmed",
+      "rationale": "Manual approvals remained the gating step even if invoice ingestion was automated."
+    },
+    {
+      "summary": "Keep GoHighLevel out of the current engagement and defer it to a separate Q3 track.",
+      "status": "confirmed"
+    },
+    {
+      "summary": "Proceed with N8N as the orchestration layer as long as the client retains ownership and avoids lock-in.",
+      "status": "confirmed"
+    },
+    {
+      "summary": "Structure delivery in three phases so the client sees ingestion working in the first three weeks.",
+      "status": "confirmed",
+      "rationale": "Patricia Walsh asked for an early working milestone to reduce risk."
+    }
+  ],
+  "actionItems": [
+    {
+      "summary": "Send the proposal to Sarah Chen and Patricia Walsh.",
+      "owner": "Bryan Mendez",
+      "dueDate": "End of next week",
+      "status": "open"
+    },
+    {
+      "summary": "Structure the proposal as a phased delivery plan with working ingestion in the first three weeks.",
+      "owner": "Bryan Mendez",
+      "status": "open"
+    }
+  ],
+  "futureWorkItems": [
+    {
+      "summary": "Consider GoHighLevel work later under a separate budget and Q3 conversation.",
+      "category": "expansion",
+      "status": "open"
+    }
+  ],
+  "approvalSignals": [
+    {
+      "summary": "Patricia Walsh reacted positively to the Slack approval workflow addition.",
+      "status": "approved"
+    }
+  ],
+  "risks": [
+    {
+      "summary": "Extraction errors could send incorrect invoice data into QuickBooks.",
+      "severity": "high"
+    },
+    {
+      "summary": "Manual approvals can remain a bottleneck even if invoice ingestion is automated.",
+      "severity": "medium"
+    }
+  ],
+  "stakeholders": [
+    {
+      "name": "Bryan Mendez",
+      "organization": "CTRL.ALT.I",
+      "role": "Solution Lead",
+      "decisionRole": "driver",
+      "relatedSourceIds": ["2026-03-11-pinnacle-logistics-follow-up"]
+    },
+    {
+      "name": "Sarah Chen",
+      "organization": "Pinnacle Logistics",
+      "role": "Director of Operations",
+      "decisionRole": "driver",
+      "relatedSourceIds": ["2026-03-11-pinnacle-logistics-follow-up"]
+    },
+    {
+      "name": "Patricia Walsh",
+      "organization": "Pinnacle Logistics",
+      "role": "CFO",
+      "decisionRole": "approver",
+      "relatedSourceIds": ["2026-03-11-pinnacle-logistics-follow-up"]
+    }
+  ],
+  "scopeChanges": [
+    {
+      "summary": "GoHighLevel was deferred out of the AP automation engagement and moved to a later Q3 track.",
+      "type": "deferred",
+      "affectedArea": "GoHighLevel"
+    },
+    {
+      "summary": "Slack approvals were added after Bryan Mendez identified manual approvals as the remaining bottleneck.",
+      "type": "added",
+      "affectedArea": "approvals"
+    }
+  ],
+  "commercialSnapshots": [
+    {
+      "sourceId": "2026-03-11-pinnacle-logistics-follow-up",
+      "buildPrice": "$24,000",
+      "monthlyPrice": "$1,800",
+      "notes": "Slack approval workflow increases the build and monthly support price."
+    }
+  ],
+  "timelineMilestones": [
+    {
+      "summary": "The workflow needs to be live before fiscal year close",
+      "status": "committed",
+      "targetDate": "June 30"
+    },
+    {
+      "summary": "Kick off by April 1 to maintain a comfortable buffer before fiscal close",
+      "status": "committed",
+      "targetDate": "April 1"
+    }
+  ],
+  "rollupHints": [
+    {
+      "kind": "project",
+      "id": "pinnacle-logistics-ap-automation",
+      "name": "Pinnacle Logistics AP Automation"
+    }
+  ]
+}

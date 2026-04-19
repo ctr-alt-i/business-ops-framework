@@ -1,0 +1,18 @@
+{
+  "name": "business-ops-framework",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LLM-native business operations workflow framework with deterministic file-based workspace ingest evals.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "eval:ingest": "npm run build --silent && node dist/scripts/evals/run-ingest-eval.js evals/suites/ingest/session-1-example-client-sync.json",
+    "eval:source-summaries": "npm run build --silent && node dist/scripts/evals/run-source-summary-eval.js evals/suites/wiki/pinnacle-logistics-source-summaries.json",
+    "eval:rollups": "npm run build --silent && node dist/scripts/evals/run-rollup-eval.js evals/suites/extraction/pinnacle-logistics-rollup.json",
+    "eval:wiki-answerability": "npm run build --silent && node dist/scripts/evals/run-wiki-answerability-eval.js evals/suites/wiki/pinnacle-logistics-answerability.json",
+    "review:pinnacle": "npm run build --silent && node dist/scripts/evals/run-html-review-report.js evals/suites/workflows/pinnacle-logistics-review.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.15",
+    "typescript": "^5.8.3"
+  }
+}

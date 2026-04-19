@@ -1,0 +1,142 @@
+{
+  "sourceSummary": {
+    "summary": "The meeting focused on Pinnacle Logistics AP Automation: Invoice ingestion from the AP inbox; LLM extraction with confidence scoring; Vendor matching against the QuickBooks vendor list; GL account mapping via a maintained lookup table. Build price: $18,000 to $22,000 (ballpark). Initial delivery estimate: six weeks from kickoff to production, assuming sandbox QuickBooks access in week one. Deferred or out-of-scope items included GoHighLevel work for this engagement (deferred to a separate Q3 conversation). Key decision: Keep GoHighLevel out of the current engagement and defer it to a separate Q3 track. Immediate next step: Put together a more detailed scope document and pressure-test the numbers.",
+    "participants": [
+      { "name": "Bryan Mendez", "organization": "CTRL.ALT.I", "role": "Solution Lead" },
+      { "name": "Marcus Reyes", "organization": "MCR Consulting", "role": "Partner" },
+      { "name": "Sarah Chen", "organization": "Pinnacle Logistics", "role": "Director of Operations" },
+      { "name": "David Kim", "organization": "Pinnacle Logistics", "role": "IT Manager" }
+    ],
+    "keyFacts": [
+      { "label": "Monthly invoice volume", "value": "800 vendor invoices per month", "category": "volume" },
+      { "label": "Accounting system", "value": "QuickBooks Online", "category": "system" },
+      { "label": "Integration API", "value": "QuickBooks Online Bills API", "category": "system" },
+      { "label": "Orchestration layer", "value": "N8N", "category": "system" },
+      { "label": "Active vendors", "value": "40 vendors", "category": "other" },
+      { "label": "Frequent GL accounts", "value": "12 regularly used accounts", "category": "other" }
+    ],
+    "scopeIn": [
+      "Invoice ingestion from the AP inbox",
+      "LLM extraction with confidence scoring",
+      "Vendor matching against the QuickBooks vendor list",
+      "GL account mapping via a maintained lookup table",
+      "QuickBooks Online Bills API push",
+      "Exception handling and human review queue"
+    ],
+    "scopeOut": [
+      "GoHighLevel work for this engagement (deferred to a separate Q3 conversation)"
+    ],
+    "commercialNotes": [
+      "Build price: $18,000 to $22,000 (ballpark)",
+      "Monthly retainer: $1,500"
+    ],
+    "timelineNotes": [
+      "Initial delivery estimate: six weeks from kickoff to production, assuming sandbox QuickBooks access in week one"
+    ],
+    "decisionsAndSignals": [
+      "Keep GoHighLevel out of the current engagement and defer it to a separate Q3 track.",
+      "Set a follow-up meeting and bring Patricia Walsh into approval discussions."
+    ],
+    "openQuestions": [
+      "Choose whether low-confidence exceptions should route through N8N or a lightweight review UI."
+    ],
+    "nextSteps": [
+      "Put together a more detailed scope document and pressure-test the numbers.",
+      "Loop Patricia Walsh into the next meeting."
+    ]
+  },
+  "decisions": [
+    {
+      "summary": "Keep GoHighLevel out of the current engagement and defer it to a separate Q3 track.",
+      "status": "confirmed"
+    },
+    {
+      "summary": "Set a follow-up meeting and bring Patricia Walsh into approval discussions.",
+      "status": "confirmed"
+    }
+  ],
+  "actionItems": [
+    {
+      "summary": "Put together a more detailed scope document and pressure-test the numbers.",
+      "owner": "Bryan Mendez",
+      "status": "open"
+    },
+    {
+      "summary": "Loop Patricia Walsh into the next meeting.",
+      "owner": "Sarah Chen",
+      "status": "open"
+    }
+  ],
+  "futureWorkItems": [
+    {
+      "summary": "Consider GoHighLevel work later under a separate budget and Q3 conversation.",
+      "category": "expansion",
+      "status": "open"
+    }
+  ],
+  "approvalSignals": [],
+  "risks": [
+    {
+      "summary": "Timeline commitments depend on timely sandbox QuickBooks access.",
+      "severity": "medium"
+    }
+  ],
+  "stakeholders": [
+    {
+      "name": "Bryan Mendez",
+      "organization": "CTRL.ALT.I",
+      "role": "Solution Lead",
+      "decisionRole": "driver",
+      "relatedSourceIds": ["2026-03-04-pinnacle-logistics-discovery"]
+    },
+    {
+      "name": "Marcus Reyes",
+      "organization": "MCR Consulting",
+      "role": "Partner",
+      "decisionRole": "observer",
+      "relatedSourceIds": ["2026-03-04-pinnacle-logistics-discovery"]
+    },
+    {
+      "name": "Sarah Chen",
+      "organization": "Pinnacle Logistics",
+      "role": "Director of Operations",
+      "decisionRole": "driver",
+      "relatedSourceIds": ["2026-03-04-pinnacle-logistics-discovery"]
+    },
+    {
+      "name": "David Kim",
+      "organization": "Pinnacle Logistics",
+      "role": "IT Manager",
+      "decisionRole": "reviewer",
+      "relatedSourceIds": ["2026-03-04-pinnacle-logistics-discovery"]
+    }
+  ],
+  "scopeChanges": [
+    {
+      "summary": "GoHighLevel was deferred out of the AP automation engagement and moved to a later Q3 track.",
+      "type": "deferred",
+      "affectedArea": "GoHighLevel"
+    }
+  ],
+  "commercialSnapshots": [
+    {
+      "sourceId": "2026-03-04-pinnacle-logistics-discovery",
+      "buildPrice": "$18,000 to $22,000",
+      "monthlyPrice": "$1,500",
+      "notes": "Initial AP automation ballpark for core ingestion, extraction, vendor matching, GL mapping, exception handling, and QuickBooks push."
+    }
+  ],
+  "timelineMilestones": [
+    {
+      "summary": "Initial estimate: six weeks from kickoff to production if sandbox access lands in week one",
+      "status": "proposed"
+    }
+  ],
+  "rollupHints": [
+    {
+      "kind": "project",
+      "id": "pinnacle-logistics-ap-automation",
+      "name": "Pinnacle Logistics AP Automation"
+    }
+  ]
+}
