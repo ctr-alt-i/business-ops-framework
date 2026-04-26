@@ -2,4 +2,4 @@
 
 Sanitized example workspace for the Session 1 scaffold.
 
-Use this workspace to validate the engagement folder shape, the `AGENTS.md` schema, and the first file-based ingest behavior.
+Use this workspace to validate the engagement folder shape, the `AGENTS.md` schema, and starter ingest/wiki refresh behavior.

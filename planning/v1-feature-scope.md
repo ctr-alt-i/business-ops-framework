@@ -68,6 +68,7 @@ This should be the first workflow because it best connects raw sources, memory u
 - updated decision log
 - updated action tracker
 - updated future work page
+- updated project/entity/topic pages when applicable
 - updated wiki index/log
 
 ### Workflow #2 — Weekly reporting
@@ -122,7 +123,10 @@ The workspace wiki should support the minimum durable structure needed to make w
 
 ### Required behaviors
 - source summaries get created on ingest
+- source summaries should evolve from stubs into answerable pages with participants, key facts, scope, commercial notes, timeline notes, and next steps
+- source summaries and operational objects should be produced from a single schema-constrained meeting analysis pass per source, with analysis artifacts persisted on disk
 - index and log get updated on ingest
+- related project/topic pages should accumulate cross-source context when multiple meetings touch the same workstream
 - wiki pages maintain links back to source evidence
 - useful query answers can be filed back into the wiki when appropriate
 - linting can identify stale, missing, contradictory, or weakly linked pages
@@ -174,12 +178,14 @@ These are the capabilities I would treat as **true v1 scope**:
 2. `AGENTS.md` workspace schema support
 3. one-source-at-a-time ingest
 4. wiki update engine
-5. decisions / actions / future work extraction
-6. post-call workflow
-7. weekly report workflow
-8. meeting recap output
-9. weekly report output
-10. eval harness with fixtures, goldens, and rubrics
+5. schema-constrained source summarization via one meeting analysis call per source
+6. decisions / actions / future work extraction from structured meeting analysis
+7. project/topic rollups for multi-meeting reasoning
+8. post-call workflow
+9. weekly report workflow
+10. meeting recap output
+11. weekly report output
+12. eval harness with fixtures, structural checks, selective goldens, schema validation, and human-review report output
 
 ## Next scope after v1
 
@@ -224,7 +230,8 @@ V1 is successful if:
 3. decisions, action items, and future work are extracted with acceptable quality
 4. a useful meeting recap can be generated
 5. a useful weekly report can be generated
-6. evals can detect regressions in ingest, extraction, wiki updates, and outputs
+6. evals can detect regressions in ingest, schema validity, wiki updates, and outputs, even when semantic extraction is model-assisted
+7. the generated wiki can answer a curated set of factual and cross-meeting questions from wiki artifacts alone
 
 ## How this should shape the next session
 
@@ -232,24 +239,27 @@ At the start of the next development session, the repo scaffold should be built 
 
 1. workspace
 2. ingest
-3. wiki
-4. operations extraction
-5. workflows
-6. outputs
-7. evals
-8. Pi integration
-9. external adapters
+3. wiki scaffold
+4. source analysis
+5. operations extraction
+6. cross-source rollups / reasoning
+7. workflows
+8. outputs
+9. evals
+10. Pi integration
+11. external adapters
 
 ## Related planning artifacts
 
 This file should sit alongside:
 
 - `00-product-framing.md`
-- `01-workspace-scope.md`
-- `02-v1-workflows.md`
-- `03-workspace-schema-draft.md`
-- `04-wiki-page-templates.md`
-- `05-extraction-schema.md`
-- `06-evals-plan.md`
+- `01-features-source-reference.md`
+- `02-workspace-scope.md`
+- `03-v1-workflows.md`
+- `04-workspace-schema-draft.md`
+- `05-wiki-page-templates.md`
+- `06-extraction-schema.md`
+- `07-evals-plan.md`
 
 If you want to keep a simpler packet, this file can serve as the bridge between the high-level features document and the concrete scaffold/evals plan.

@@ -82,10 +82,11 @@ When a new source is ingested:
 
 1. validate the workspace scaffold
 2. place or copy the source into the correct `raw/` subfolder
-3. create `wiki/sources/<source-id>.md`
-4. update `wiki/index.md`
-5. append `wiki/log.md`
-6. leave extraction-heavy follow-on work for later sessions if not implemented yet
+3. analyze the source once through the configured meeting analyzer
+4. persist `wiki/sources/<source-id>.analysis.md`
+5. render `wiki/sources/<source-id>.md` from the normalized structured result
+6. update `wiki/index.md` and `wiki/log.md`
+7. refresh ops pages and project/topic rollups from persisted source analyses
 
 ## File update conventions
 
