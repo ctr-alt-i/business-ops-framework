@@ -5,6 +5,8 @@
   "description": "LLM-native business operations workflow framework with deterministic file-based workspace ingest evals.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "sandbox": "npm run build --silent && node dist/scripts/sandbox/run-sandbox.js",
+    "sandbox:ask": "npm run build --silent && node dist/scripts/sandbox/run-sandbox-ask.js",
     "eval:ingest": "npm run build --silent && node dist/scripts/evals/run-ingest-eval.js evals/suites/ingest/session-1-example-client-sync.json",
     "eval:source-summaries": "npm run build --silent && node dist/scripts/evals/run-source-summary-eval.js evals/suites/wiki/pinnacle-logistics-source-summaries.json",
     "eval:rollups": "npm run build --silent && node dist/scripts/evals/run-rollup-eval.js evals/suites/extraction/pinnacle-logistics-rollup.json",
