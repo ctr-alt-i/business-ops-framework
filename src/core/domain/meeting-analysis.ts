@@ -12,6 +12,7 @@ import type {
   Risk,
   RollupHint,
   ScopeChange,
+  SourceProvenance,
   SourceRecord,
   SourceSummary,
   Stakeholder,
@@ -70,6 +71,7 @@ interface PartialSourceSummary {
   sourceDate?: string;
   ingestedAt?: string;
   rawPath?: string;
+  provenance?: SourceProvenance;
   summary?: string;
   participants?: PartialParticipant[];
   keyFacts?: PartialKeyFact[];
@@ -447,6 +449,7 @@ export function normalizeMeetingAnalysisResult(
     sourceDate: sourceSummaryInput.sourceDate?.trim() || source.sourceDate,
     ingestedAt: sourceSummaryInput.ingestedAt?.trim() || source.ingestedAt,
     rawPath: sourceSummaryInput.rawPath?.trim() || source.rawPath,
+    provenance: sourceSummaryInput.provenance ?? source.provenance,
     summary: summaryText,
     participants,
     keyFacts,

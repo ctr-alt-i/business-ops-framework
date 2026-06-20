@@ -77,6 +77,7 @@ function sourceRecordFromAnalysis(analysis: MeetingAnalysisResult): SourceRecord
     rawPath: summary.rawPath,
     summaryPath: summaryPathForSource(summary.sourceId),
     analysisPath: analysisPathForSource(summary.sourceId),
+    provenance: summary.provenance,
   };
 }
 
@@ -322,6 +323,7 @@ export async function loadPersistedMeetingAnalyses(workspace: WorkspaceDefinitio
       rawPath: summary.rawPath ?? `raw/meetings/${sourceId}.md`,
       summaryPath: summaryPathForSource(sourceId),
       analysisPath: analysisPathForSource(sourceId),
+      provenance: summary.provenance,
     };
     const normalized = normalizeMeetingAnalysisResult(source, parsed);
     analyses.push(normalized.result);

@@ -195,6 +195,7 @@ export interface SourceSummary {
   sourceDate: string;
   ingestedAt: string;
   rawPath: string;
+  provenance?: SourceProvenance;
   summary: string;
   participants: Participant[];
   keyFacts: KeyFact[];
@@ -333,6 +334,21 @@ export interface IngestRequest {
   title?: string;
   sourceDate?: string;
   ingestedAt?: string;
+}
+
+export interface IngestMaterialRequest {
+  workspaceRoot: string;
+  fileName: string;
+  rawText: string;
+  kind?: RawSourceKind;
+  title?: string;
+  sourceDate?: string;
+  ingestedAt?: string;
+  originalUri?: string;
+  externalId?: string;
+  adapterId?: string;
+  checksum?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface IngestResult {

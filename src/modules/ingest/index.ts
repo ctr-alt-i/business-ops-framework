@@ -4,12 +4,38 @@ import { basename, extname, join, relative, resolve, sep } from "node:path";
 import { createDefaultMeetingAnalyzerFromEnv } from "../../adapters/analysis";
 import type { MeetingAnalyzer } from "../../core/contracts/meeting-analyzer";
 import { normalizeMeetingAnalysisResult } from "../../core/domain/meeting-analysis";
-import type { IngestRequest, IngestResult, RawSourceKind, SourceRecord } from "../../core/types";
+import type {
+  IngestMaterialRequest,
+  IngestRequest,
+  IngestResult,
+  RawSourceKind,
+  SourceProvenance,
+  SourceRecord,
+  WorkspaceBootstrapResult,
+} from "../../core/types";
 import { loadPersistedMeetingAnalyses, persistMeetingAnalysisArtifact, refreshWorkspaceWikiFromAnalyses } from "../wiki";
 import { getRawCollectionPath, initWorkspace } from "../workspace";
 
 export interface IngestSourceOptions extends IngestRequest {
   analyzer?: MeetingAnalyzer;
+}
+
+export interface IngestMaterialOptions extends IngestMaterialRequest {
+  analyzer?: MeetingAnalyzer;
+}
+
+interface PreparedTextIngestRequest {
+  workspaceRoot: string;
+  fileName: string;
+  sourceLocator: string;
+  loadRawText: () => Promise<string>;
+  analyzer?: MeetingAnalyzer;
+  kind?: RawSourceKind;
+  title?: string;
+  sourceDate?: string;
+  ingestedAt?: string;
+  originalPath?: string;
+  provenance?: SourceProvenance;
 }
 
 function stripExtension(filename: string): string {
@@ -37,20 +63,18 @@ function toPosixPath(value: string): string {
   return value.split(sep).join("/");
 }
 
-async function stageTextSource(inputPath: string, destinationPath: string): Promise<"created" | "updated" | "unchanged"> {
-  const sourceContent = await readFile(inputPath, "utf8");
-
+async function stageTextContent(rawText: string, destinationPath: string): Promise<"created" | "updated" | "unchanged"> {
   try {
     const destinationContent = await readFile(destinationPath, "utf8");
 
-    if (destinationContent === sourceContent) {
+    if (destinationContent === rawText) {
       return "unchanged";
     }
 
-    await writeFile(destinationPath, sourceContent, "utf8");
+    await writeFile(destinationPath, rawText, "utf8");
     return "updated";
   } catch {
-    await writeFile(destinationPath, sourceContent, "utf8");
+    await writeFile(destinationPath, rawText, "utf8");
     return "created";
   }
 }
@@ -105,8 +129,61 @@ function resolveMeetingAnalyzer(analyzer?: MeetingAnalyzer): MeetingAnalyzer {
   })();
 }
 
-export async function ingestSource(request: IngestSourceOptions): Promise<IngestResult> {
-  const bootstrap = await initWorkspace(request.workspaceRoot);
+function stringMetadataValue(metadata: Record<string, unknown> | undefined, keys: string[]): string | undefined {
+  if (!metadata) {
+    return undefined;
+  }
+
+  for (const key of keys) {
+    const value = metadata[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return undefined;
+}
+
+function buildSourceProvenance(request: IngestMaterialRequest): SourceProvenance | undefined {
+  const provenance: SourceProvenance = {};
+
+  if (request.adapterId) {
+    provenance.adapterId = request.adapterId;
+  }
+
+  if (request.externalId) {
+    provenance.externalId = request.externalId;
+  }
+
+  if (request.originalUri) {
+    provenance.originalUri = request.originalUri;
+  }
+
+  if (request.checksum) {
+    provenance.checksum = request.checksum;
+  }
+
+  const externalCreatedAt = stringMetadataValue(request.metadata, ["created_at", "createdAt"]);
+  const externalUpdatedAt = stringMetadataValue(request.metadata, ["updated_at", "updatedAt"]);
+
+  if (externalCreatedAt) {
+    provenance.externalCreatedAt = externalCreatedAt;
+  }
+
+  if (externalUpdatedAt) {
+    provenance.externalUpdatedAt = externalUpdatedAt;
+  }
+
+  if (request.metadata && Object.keys(request.metadata).length > 0) {
+    provenance.metadata = { ...request.metadata };
+  }
+
+  return Object.keys(provenance).length > 0 ? provenance : undefined;
+}
+
+async function initAndValidateWorkspace(workspaceRoot: string): Promise<WorkspaceBootstrapResult> {
+  const bootstrap = await initWorkspace(workspaceRoot);
 
   if (!bootstrap.validation.valid) {
     const errors = bootstrap.validation.issues
@@ -117,12 +194,16 @@ export async function ingestSource(request: IngestSourceOptions): Promise<Ingest
     throw new Error(`Workspace validation failed: ${errors}`);
   }
 
+  return bootstrap;
+}
+
+async function ingestPreparedTextSource(request: PreparedTextIngestRequest): Promise<IngestResult> {
+  const bootstrap = await initAndValidateWorkspace(request.workspaceRoot);
   const workspace = bootstrap.workspace;
-  const absoluteInputPath = resolve(request.inputPath);
   const analyzer = resolveMeetingAnalyzer(request.analyzer);
   const warnings: string[] = [];
-  const kind = request.kind ?? inferSourceKind(absoluteInputPath);
-  const inferredSourceDate = inferSourceDate(absoluteInputPath);
+  const kind = request.kind ?? inferSourceKind(request.sourceLocator);
+  const inferredSourceDate = inferSourceDate(request.sourceLocator);
   const sourceDate = request.sourceDate ?? inferredSourceDate ?? new Date().toISOString().slice(0, 10);
   const ingestedAt = request.ingestedAt ?? new Date().toISOString();
 
@@ -130,20 +211,18 @@ export async function ingestSource(request: IngestSourceOptions): Promise<Ingest
     warnings.push(`No source date found in path; defaulted to ${sourceDate}.`);
   }
 
-  const normalizedBaseName = normalizeBaseName(absoluteInputPath);
+  const normalizedBaseName = normalizeBaseName(request.fileName || request.sourceLocator);
   const title = request.title ?? humanizeSlug(normalizedBaseName || "source");
   const slug = slugify(title || normalizedBaseName || "source");
   const sourceId = `${sourceDate}-${slug}`;
-  const extension = extname(absoluteInputPath) || ".md";
+  const extension = extname(request.fileName) || ".md";
   const rawDirectory = getRawCollectionPath(workspace, kind);
   const destinationPath = resolve(join(rawDirectory, `${sourceId}${extension}`));
   const rawRelativePath = toPosixPath(relative(workspace.root, destinationPath));
   const createdFiles = [...bootstrap.createdFiles];
   const updatedFiles: string[] = [];
-
-  await readFile(absoluteInputPath, "utf8");
-
-  const stagedRawFile = await stageTextSource(absoluteInputPath, destinationPath);
+  const rawTextToStage = await request.loadRawText();
+  const stagedRawFile = await stageTextContent(rawTextToStage, destinationPath);
 
   if (stagedRawFile === "created") {
     createdFiles.push(rawRelativePath);
@@ -163,8 +242,15 @@ export async function ingestSource(request: IngestSourceOptions): Promise<Ingest
     rawPath: rawRelativePath,
     summaryPath: `wiki/sources/${sourceId}.md`,
     analysisPath: `wiki/sources/${sourceId}.analysis.md`,
-    originalPath: absoluteInputPath,
   };
+
+  if (request.originalPath) {
+    source.originalPath = request.originalPath;
+  }
+
+  if (request.provenance) {
+    source.provenance = request.provenance;
+  }
 
   const rawText = await readFile(destinationPath, "utf8");
   const rawAnalysis = await analyzer.analyze({
@@ -202,3 +288,37 @@ export async function ingestSource(request: IngestSourceOptions): Promise<Ingest
     workstreams: wikiMutation.workstreams,
   };
 }
+
+export async function ingestSource(request: IngestSourceOptions): Promise<IngestResult> {
+  const absoluteInputPath = resolve(request.inputPath);
+
+  return ingestPreparedTextSource({
+    workspaceRoot: request.workspaceRoot,
+    fileName: absoluteInputPath,
+    sourceLocator: absoluteInputPath,
+    loadRawText: () => readFile(absoluteInputPath, "utf8"),
+    analyzer: request.analyzer,
+    kind: request.kind,
+    title: request.title,
+    sourceDate: request.sourceDate,
+    ingestedAt: request.ingestedAt,
+    originalPath: absoluteInputPath,
+  });
+}
+
+export async function ingestMaterial(request: IngestMaterialOptions): Promise<IngestResult> {
+  return ingestPreparedTextSource({
+    workspaceRoot: request.workspaceRoot,
+    fileName: request.fileName,
+    sourceLocator: request.fileName,
+    loadRawText: async () => request.rawText,
+    analyzer: request.analyzer,
+    kind: request.kind,
+    title: request.title,
+    sourceDate: request.sourceDate,
+    ingestedAt: request.ingestedAt,
+    provenance: buildSourceProvenance(request),
+  });
+}
+
+export * from "./source-material";
