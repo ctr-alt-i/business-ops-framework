@@ -19,40 +19,46 @@ npm ci
 This works out of the box on the included sanitized sample and writes a generated workspace to `.tmp/sandbox/example-engagement`.
 
 ```bash
+npm run sandbox:sample
+npm run sandbox:sample:ask -- "What are the next steps?"
+```
+
+## Local transcript sandbox
+
+Use the existing ingest/wiki pipeline with a local manual workflow under `test/`.
+
+`test/` and `tests/transcripts/` are local-only and ignored by git so private conversations do not get committed.
+
+```bash
+export MEETING_ANALYZER_API_KEY=...
+export MEETING_ANALYZER_MODEL=...
+# optional: MEETING_ANALYZER_BASE_URL, MEETING_ANALYZER_PROVIDER,
+#           MEETING_ANALYZER_ID, MEETING_ANALYZER_PROMPT_VERSION
+
+npm run sandbox:init
+# optional: preload your own local private fixtures from tests/transcripts/
+npm run sandbox:init -- --seed-samples
 npm run sandbox
+npm run sandbox:ask -- "What changed?"
 ```
 
-### 3) Ask the generated wiki a question
+Paths:
+- drop text transcripts/notes into `test/transcripts/`
+- optional private seed fixtures can live in `tests/transcripts/`
+- generated workspace lives in `test/workspace/`
+- HTML review report is written to `test/workspace/outputs/reports/local-sandbox-report.html`
 
-`sandbox:ask` is a lightweight local wiki query helper that surfaces the most relevant markdown pages and snippets.
-
-```bash
-npm run sandbox:ask -- "What are the next steps?"
-```
-
-### 4) Ingest your own test file
-
-If you want to ingest your own meeting notes or transcript instead of the bundled sample, set the minimum analyzer config first:
-
-```bash
-cp .env.example .env
-# required for custom file ingest
-# MEETING_ANALYZER_API_KEY=...
-# MEETING_ANALYZER_MODEL=...
-```
-
-Then run:
-
-```bash
-npm run sandbox -- ./sandbox-input/meetings/my-client-call.md ./.tmp/sandbox/my-engagement
-npm run sandbox:ask -- "What changed in scope?" ./.tmp/sandbox/my-engagement
-```
+Behavior:
+- ingest keeps the current single-call `MeetingAnalyzer` flow
+- source analyses persist to `wiki/sources/*.analysis.md`
+- source pages, ops pages, and project/topic rollups rebuild from persisted analyses
+- `sandbox:ask` answers from generated wiki artifacts first and does not read raw transcripts
 
 ## Minimum model setup
 
 Evals and the bundled sandbox sample do **not** require API keys.
 
-To ingest your own files, the minimum required variables are:
+The local transcript sandbox and custom file ingest require:
 
 - `MEETING_ANALYZER_API_KEY`
 - `MEETING_ANALYZER_MODEL`
@@ -69,19 +75,16 @@ Compatibility fallbacks:
 - `OPENAI_API_KEY`
 - `OPENAI_MODEL`
 
-## Where to put test files
+## Custom file ingest
 
-### Fastest path for ad-hoc testing
-
-Put local test files anywhere you want and pass the path into `npm run sandbox`:
+If you want to ingest your own meeting notes or transcript instead of the bundled sample, set the analyzer config first, then run:
 
 ```bash
-npm run sandbox -- ./sandbox-input/meetings/my-client-call.md
+npm run sandbox:sample -- ./sandbox-input/meetings/my-client-call.md ./.tmp/sandbox/my-engagement
+npm run sandbox:sample:ask -- "What changed in scope?" ./.tmp/sandbox/my-engagement
 ```
 
-During ingest, the file is copied into the target workspace under the correct `raw/` folder and the wiki is refreshed.
-
-### Recommended local testing folders
+## Recommended local testing folders
 
 ```text
 sandbox-input/
@@ -89,56 +92,14 @@ sandbox-input/
     └── my-client-call.md
 ```
 
-### If you want a persistent workspace in the repo
-
-Use an engagement workspace shape like this:
-
-```text
-workspaces/<engagement>/
-├── AGENTS.md
-├── README.md
-├── raw/
-│   ├── meetings/
-│   ├── technical/
-│   ├── communications/
-│   └── clients/
-├── wiki/
-│   ├── index.md
-│   ├── log.md
-│   ├── overview.md
-│   ├── sources/
-│   ├── projects/
-│   ├── topics/
-│   ├── entities/
-│   └── ops/
-│       ├── decision-log.md
-│       ├── action-tracker.md
-│       └── future-work.md
-├── outputs/
-│   ├── reports/
-│   ├── recaps/
-│   └── decks/
-├── admin/
-│   ├── legal/
-│   └── finance/
-└── archive/
-```
-
-For most transcript or notes-based testing, place source files in:
-
-- `raw/meetings/`
-
-Other supported raw buckets:
-
-- `raw/technical/`
-- `raw/communications/`
-- `raw/clients/`
-
 ## Commands
 
 - `npm run build` — compile TypeScript into `dist/`
-- `npm run sandbox` — ingest the bundled sample or a provided file into a sandbox workspace
-- `npm run sandbox:ask` — query a generated workspace wiki by keyword and snippet match
+- `npm run sandbox:init` — initialize the local `test/` sandbox workspace
+- `npm run sandbox` — ingest files from `test/transcripts/` into `test/workspace/`
+- `npm run sandbox:ask` — query the generated `test/workspace/` wiki
+- `npm run sandbox:sample` — ingest the bundled sample or a provided file into a sandbox workspace
+- `npm run sandbox:sample:ask` — query a bundled/custom sample workspace wiki by keyword and snippet match
 - `npm run eval:ingest` — deterministic single-source ingest eval
 - `npm run eval:source-summaries` — deterministic multi-source summary eval
 - `npm run eval:rollups` — deterministic project + ops rollup eval
@@ -150,7 +111,8 @@ Other supported raw buckets:
 
 - `src/` — framework code
 - `scripts/evals/` — eval runners and report generation
-- `scripts/sandbox/` — quick-start sandbox helpers
+- `scripts/sandbox/` — bundled sample sandbox helpers
+- `scripts/local/` — local transcript sandbox helpers
 - `evals/` — fixtures, suites, and goldens
 - `workspaces/example-engagement/` — sanitized example workspace scaffold
 - `planning/` — sanitized design/reference material
@@ -165,6 +127,7 @@ business-ops-framework/
 │   └── modules/
 ├── scripts/
 │   ├── evals/
+│   ├── local/
 │   └── sandbox/
 ├── evals/
 │   ├── fixtures/

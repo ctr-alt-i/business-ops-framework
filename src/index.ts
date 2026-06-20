@@ -1,5 +1,7 @@
 export * from "./core/types";
 export * from "./core/contracts/meeting-analyzer";
+export * from "./core/contracts/source-adapter";
+export * from "./core/contracts/mcp-bridge";
 export * from "./core/domain/meeting-analysis";
 export * from "./adapters/analysis";
 export * from "./modules/workspace";

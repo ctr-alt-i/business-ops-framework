@@ -328,7 +328,7 @@ export class OpenAICompatibleMeetingAnalyzer implements MeetingAnalyzer {
             type: "json_schema",
             json_schema: {
               name: "meeting_analysis_payload",
-              strict: true,
+              strict: false,
               schema: meetingAnalysisPayloadSchema,
             },
           },
@@ -383,6 +383,14 @@ export class OpenAICompatibleMeetingAnalyzer implements MeetingAnalyzer {
         timelineMilestones: payload.timelineMilestones ?? [],
         rollupHints: payload.rollupHints ?? [],
       } as unknown as MeetingAnalysisResult;
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new Error(
+          `Meeting analyzer timed out after ${this.timeoutMs}ms for source ${request.source.id}. Try a faster MEETING_ANALYZER_MODEL or raise MEETING_ANALYZER_TIMEOUT_MS.`,
+        );
+      }
+
+      throw error;
     } finally {
       clearTimeout(timeout);
     }

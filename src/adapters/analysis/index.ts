@@ -13,6 +13,10 @@ export function createDefaultMeetingAnalyzerFromEnv(): MeetingAnalyzer | undefin
     return undefined;
   }
 
+  const timeoutMs = process.env.MEETING_ANALYZER_TIMEOUT_MS
+    ? Number.parseInt(process.env.MEETING_ANALYZER_TIMEOUT_MS, 10)
+    : undefined;
+
   return new OpenAICompatibleMeetingAnalyzer({
     apiKey,
     model,
@@ -20,5 +24,6 @@ export function createDefaultMeetingAnalyzerFromEnv(): MeetingAnalyzer | undefin
     provider: process.env.MEETING_ANALYZER_PROVIDER,
     analyzerId: process.env.MEETING_ANALYZER_ID,
     promptVersion: process.env.MEETING_ANALYZER_PROMPT_VERSION,
+    timeoutMs: Number.isFinite(timeoutMs) ? timeoutMs : undefined,
   });
 }

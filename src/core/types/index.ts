@@ -128,6 +128,52 @@ export interface RollupHint {
   name: string;
 }
 
+export interface SourceProvenance {
+  adapterId?: string;
+  externalId?: string;
+  originalUri?: string;
+  checksum?: string;
+  externalCreatedAt?: string;
+  externalUpdatedAt?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ExternalSourceRef {
+  adapterId: string;
+  externalId: string;
+  uri: string;
+  title?: string;
+  kind?: RawSourceKind;
+  sourceDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  mimeType?: string;
+  checksum?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SourceMaterial {
+  ref: ExternalSourceRef;
+  fileName: string;
+  mimeType?: string;
+  text?: string;
+  bytes?: Uint8Array;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SourceDiscoveryRequest {
+  cursor?: string;
+  limit?: number;
+  since?: string;
+  until?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SourceDiscoveryResult {
+  items: ExternalSourceRef[];
+  nextCursor?: string;
+}
+
 export interface SourceRecord {
   id: string;
   title: string;
@@ -139,6 +185,7 @@ export interface SourceRecord {
   summaryPath: string;
   analysisPath: string;
   originalPath?: string;
+  provenance?: SourceProvenance;
 }
 
 export interface SourceSummary {

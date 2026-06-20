@@ -12,3 +12,7 @@ tmp/
 .cache/
 workspaces-local/
 private-data/
+
+# local-only transcript sandboxes and private fixtures
+/test/
+/tests/transcripts/
